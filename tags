@@ -28,7 +28,7 @@ RREQ_REPAIR	aodv_rreq.h	28;"	d
 RREQ_SIZE	aodv_rreq.h	25;"	d
 RREQ_UNKNOWN_SEQNO	aodv_rreq.h	31;"	d
 SEND_BUF_SIZE	aodv_socket.h	7;"	d
-SOCK_RECVBUF_SIZE	aodv_socket.c	9;"	d	file:
+SOCK_RECVBUF_SIZE	aodv_socket.c	10;"	d	file:
 SRCS	Makefile	/^SRCS = $(shell echo *.c)$/;"	m
 TARGET	Makefile	/^TARGET = aodv$/;"	m
 _AODV_RREQ_H_	aodv_rreq.h	2;"	d
@@ -36,6 +36,8 @@ _AODV_SOCKET_H_	aodv_socket.h	2;"	d
 _DEFINE_H_	defs.h	2;"	d
 aodv_socket_init	aodv_socket.c	/^void aodv_socket_init(void)$/;"	f
 aodv_socket_new_msg	aodv_socket.c	/^u8_t *aodv_socket_new_msg(void)$/;"	f
+aodv_socket_package_process	aodv_socket.c	/^void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr src, struct in_addr dest, s32_t ttl)$/;"	f
+aodv_socket_read	aodv_socket.c	/^void aodv_socket_read(s32_t fd)$/;"	f
 aodv_socket_send	aodv_socket.c	/^void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, u32_t len, u8_t ttl, struct dev_info *dev)$/;"	f
 broadcast	defs.h	/^	struct in_addr broadcast;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 d	aodv_rreq.h	/^	u8_t d:1;$/;"	m	struct:__anon1
@@ -52,7 +54,6 @@ ipaddr	defs.h	/^	struct in_addr ipaddr;$/;"	m	struct:dev_info	typeref:struct:dev
 j	aodv_rreq.h	/^	u8_t j:1;$/;"	m	struct:__anon1
 last_broadcast_time	defs.h	/^	struct timeval last_broadcast_time;$/;"	m	struct:host_info	typeref:struct:host_info::timeval
 main	main.c	/^int main()$/;"	f
-msg	defs.h	/^	u8_t *msg;$/;"	m	struct:__anon2
 netmask	defs.h	/^	struct in_addr netmask;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 num_rerr	aodv_socket.c	/^u32_t num_rerr;$/;"	v
 num_rreq	aodv_socket.c	/^u32_t num_rreq;$/;"	v
@@ -76,6 +77,7 @@ seqno	defs.h	/^	u32_t seqno;$/;"	m	struct:host_info
 seqno_incr	aodv_rreq.h	33;"	d
 sock	defs.h	/^	s32_t sock;           \/\/socket associated with this device$/;"	m	struct:dev_info
 this_host	defs.h	/^struct host_info this_host;$/;"	v	typeref:struct:host_info
+timeval_diff	aodv_socket.c	/^static inline long timeval_diff(struct timeval *t1, struct timeval *t2)$/;"	f	file:
 type	aodv_rreq.h	/^	u8_t type;$/;"	m	struct:__anon1
 type	defs.h	/^	u8_t type;$/;"	m	struct:__anon2
 u	aodv_rreq.h	/^	u8_t u:1;$/;"	m	struct:__anon1
