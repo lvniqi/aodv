@@ -1,0 +1,9 @@
+#ifndef _DEFINE_H_
+#define _DEFINE_H_
+
+typedef unsigned char u8_t;
+typedef signed   char s8_t;
+typedef unsigned int  u32_t;
+typedef signed   int  s32_t;
+
+#endif

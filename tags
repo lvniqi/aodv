@@ -1,0 +1,84 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AODV_BROADCAST	defs.h	23;"	d
+AODV_HELLO	defs.h	17;"	d
+AODV_PORT	defs.h	25;"	d
+AODV_RERR	defs.h	20;"	d
+AODV_RREP	defs.h	19;"	d
+AODV_RREP_ACK	defs.h	21;"	d
+AODV_RREQ	defs.h	18;"	d
+AODV_msg	defs.h	/^}AODV_msg;$/;"	t	typeref:struct:__anon2
+CC	Makefile	/^CC = mipsel-linux-gcc$/;"	m
+CCFLAGS	Makefile	/^CCFLAGS = -Wstrict-prototypes$/;"	m
+INCLUDES	Makefile	/^INCLUDES =$/;"	m
+LIBS	Makefile	/^LIBS = $/;"	m
+OBJS	Makefile	/^OBJS = $(SRCS:.c = .o)$/;"	m
+RECE_BUF_SIZE	aodv_socket.h	6;"	d
+RERR_RATELIMIT	defs.h	28;"	d
+RREQ	aodv_rreq.h	/^}RREQ;$/;"	t	typeref:struct:__anon1
+RREQ_DEST_ONLY	aodv_rreq.h	30;"	d
+RREQ_GRATUITOUS	aodv_rreq.h	29;"	d
+RREQ_JOIN	aodv_rreq.h	27;"	d
+RREQ_RATELIMIT	defs.h	27;"	d
+RREQ_REPAIR	aodv_rreq.h	28;"	d
+RREQ_SIZE	aodv_rreq.h	25;"	d
+RREQ_UNKNOWN_SEQNO	aodv_rreq.h	31;"	d
+SEND_BUF_SIZE	aodv_socket.h	7;"	d
+SOCK_RECVBUF_SIZE	aodv_socket.c	9;"	d	file:
+SRCS	Makefile	/^SRCS = $(shell echo *.c)$/;"	m
+TARGET	Makefile	/^TARGET = aodv$/;"	m
+_AODV_RREQ_H_	aodv_rreq.h	2;"	d
+_AODV_SOCKET_H_	aodv_socket.h	2;"	d
+_DEFINE_H_	defs.h	2;"	d
+aodv_socket_init	aodv_socket.c	/^void aodv_socket_init(void)$/;"	f
+aodv_socket_new_msg	aodv_socket.c	/^u8_t *aodv_socket_new_msg(void)$/;"	f
+aodv_socket_send	aodv_socket.c	/^void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, u32_t len, u8_t ttl, struct dev_info *dev)$/;"	f
+broadcast	defs.h	/^	struct in_addr broadcast;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
+d	aodv_rreq.h	/^	u8_t d:1;$/;"	m	struct:__anon1
+dest_addr	aodv_rreq.h	/^	u32_t dest_addr;$/;"	m	struct:__anon1
+dest_seqno	aodv_rreq.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon1
+dev	defs.h	/^	struct dev_info dev;$/;"	m	struct:host_info	typeref:struct:host_info::dev_info
+dev_info	defs.h	/^struct dev_info $/;"	s
+enabled	defs.h	/^	u8_t enabled;$/;"	m	struct:dev_info
+g	aodv_rreq.h	/^	u8_t g:1;$/;"	m	struct:__anon1
+hop_cnt	aodv_rreq.h	/^	u8_t hop_cnt;$/;"	m	struct:__anon1
+host_info	defs.h	/^struct host_info\/\/ no need for other variables in example$/;"	s
+ifname	defs.h	/^	s8_t ifname;$/;"	m	struct:dev_info
+ipaddr	defs.h	/^	struct in_addr ipaddr;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
+j	aodv_rreq.h	/^	u8_t j:1;$/;"	m	struct:__anon1
+last_broadcast_time	defs.h	/^	struct timeval last_broadcast_time;$/;"	m	struct:host_info	typeref:struct:host_info::timeval
+main	main.c	/^int main()$/;"	f
+msg	defs.h	/^	u8_t *msg;$/;"	m	struct:__anon2
+netmask	defs.h	/^	struct in_addr netmask;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
+num_rerr	aodv_socket.c	/^u32_t num_rerr;$/;"	v
+num_rreq	aodv_socket.c	/^u32_t num_rreq;$/;"	v
+orig_addr	aodv_rreq.h	/^	u32_t orig_addr;$/;"	m	struct:__anon1
+orig_seqno	aodv_rreq.h	/^	u32_t orig_seqno;$/;"	m	struct:__anon1
+r	aodv_rreq.h	/^	u8_t r:1;$/;"	m	struct:__anon1
+ratelimit	main.c	/^int ratelimit = 1;$/;"	v
+rece_buf	aodv_socket.c	/^u8_t rece_buf[RECE_BUF_SIZE];$/;"	v
+rerr_ratelimit	aodv_socket.c	/^struct timeval rerr_ratelimit[RERR_RATELIMIT];$/;"	v	typeref:struct:timeval
+res1	aodv_rreq.h	/^	u8_t res1:3;$/;"	m	struct:__anon1
+res2	aodv_rreq.h	/^	u8_t res2;$/;"	m	struct:__anon1
+rreq_create	aodv_rreq.c	/^RREQ *rreq_create(u8_t flags, struct in_addr dest_addr, u32_t dest_seqno, struct in_addr orig_addr)$/;"	f
+rreq_id	aodv_rreq.h	/^	u32_t rreq_id;$/;"	m	struct:__anon1
+rreq_id	defs.h	/^	u32_t rreq_id;$/;"	m	struct:host_info
+rreq_ratelimit	aodv_socket.c	/^struct timeval rreq_ratelimit[RREQ_RATELIMIT];\/\/limit the package num send every second$/;"	v	typeref:struct:timeval
+rreq_send	aodv_rreq.c	/^void rreq_send(struct in_addr dest_addr, u32_t dest_seqno, u8_t ttl, u8_t flags)$/;"	f
+s32_t	defs.h	/^typedef signed   int  s32_t;$/;"	t
+s8_t	defs.h	/^typedef signed   char s8_t;$/;"	t
+send_buf	aodv_socket.c	/^u8_t send_buf[SEND_BUF_SIZE];$/;"	v
+seqno	defs.h	/^	u32_t seqno;$/;"	m	struct:host_info
+seqno_incr	aodv_rreq.h	33;"	d
+sock	defs.h	/^	s32_t sock;           \/\/socket associated with this device$/;"	m	struct:dev_info
+this_host	defs.h	/^struct host_info this_host;$/;"	v	typeref:struct:host_info
+type	aodv_rreq.h	/^	u8_t type;$/;"	m	struct:__anon1
+type	defs.h	/^	u8_t type;$/;"	m	struct:__anon2
+u	aodv_rreq.h	/^	u8_t u:1;$/;"	m	struct:__anon1
+u32_t	defs.h	/^typedef unsigned int  u32_t;$/;"	t
+u8_t	defs.h	/^typedef unsigned char u8_t;$/;"	t
+wait_on_reboot	main.c	/^int wait_on_reboot = 1;$/;"	v
