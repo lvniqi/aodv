@@ -51,7 +51,6 @@ struct host_info this_host;
 typedef struct 
 {
 	u8_t type;
-	u8_t *msg;
 }AODV_msg;
 
 #endif

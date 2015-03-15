@@ -215,23 +215,23 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 	if((aodv_msg->type == AODV_RREP) && (ttl == 1) && (dest.s_addr == AODV_BROADCAST))
 		aodv_msg->type = AODV_HELLO;
 
-	neighbor_add(aodv_msg, src);
+	//neighbor_add(aodv_msg, src);//for compile
 
 	switch(aodv_msg->type)
 	{
-		case AODV_HELLO :   hello_process((RREP *)aodv_msg, len);
+		case AODV_HELLO :  // hello_process((RREP *)aodv_msg, len);
 							printf("Received HELLO package!\n");
 							break;
-		case AODV_RREQ :	rreq_process((RREQ *)aodv_msg, len);
+		case AODV_RREQ :	rreq_process((RREQ *)aodv_msg, len, src, dest, ttl);
 							printf("Received RREQ package!\n");
 							break;
-		case AODV_RREP :	rrep_process((RREP *)aodv_msg, len);
+		case AODV_RREP ://	rrep_process((RREP *)aodv_msg, len);
 							printf("Received RREP package!\n");
 							break;
-		case AODV_RERR :	rerr_process((RERR *)aodv_msg, len);
+		case AODV_RERR ://	rerr_process((RERR *)aodv_msg, len);
 							printf("Received RERR package!\n");
 							break;
-		case AODV_RREP_ACK :rrep_ack_process((RREP_ACK *)aodv_msg, len);
+		case AODV_RREP_ACK ://rrep_ack_process((RREP_ACK *)aodv_msg, len);
 							printf("Received RREP_ACK package!\n");
 							break;
 		default :			printf("Unknown msg type %u received from %s to %s", aodv_msg->type, inet_ntoa(src), inet_ntoa(dest));

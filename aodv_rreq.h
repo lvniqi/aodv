@@ -13,7 +13,7 @@ typedef struct
 	u8_t u:1;
 	u8_t res1:3;
 	u8_t res2;
-	u8_t hop_cnt;
+	u8_t hopcnt;
 
 	u32_t rreq_id;
 	u32_t dest_addr;
@@ -31,5 +31,7 @@ typedef struct
 #define RREQ_UNKNOWN_SEQNO (1 << 3)
 
 #define seqno_incr(s) ((s == 0) ? 0 : ((s == 0xffffffff) ? s = 1 : s++))
+
+void rreq_process(RREQ *rreq, u32_t len, struct in_addr ip_src, struct in_addr ip_dest, int ip_ttl);
 
 #endif
