@@ -1,5 +1,6 @@
 #include "aodv_socket.h"
 #include "aodv_rreq.h"
+#include "timer_queue.h"
 #include <memory.h>
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -9,11 +10,11 @@
 
 #define SOCK_RECVBUF_SIZE 256*1024
 
-extern wait_on_reboot;
-extern ratelimit;
+extern s32_t wait_on_reboot;
+extern s32_t ratelimit;
 
-u8_t rece_buf[RECE_BUF_SIZE];
-u8_t send_buf[SEND_BUF_SIZE];
+s8_t recv_buf[RECE_BUF_SIZE];
+s8_t send_buf[SEND_BUF_SIZE];
 
 u32_t num_rreq;
 u32_t num_rerr;
@@ -21,35 +22,25 @@ u32_t num_rerr;
 struct timeval rreq_ratelimit[RREQ_RATELIMIT];//limit the package num send every second
 struct timeval rerr_ratelimit[RERR_RATELIMIT];
 
-static inline long timeval_diff(struct timeval *t1, struct timeval *t2)
-{
-    long long res;		// avoid overflows while calculating
-
-    if (!t1 || !t2)
-		return -1;
-    else 
-	{
-		res = ((t1->tv_sec - t2->tv_sec) * 1000 + t1->tv_usec - t2->tv_usec) / 1000;
-		return (long) res;
-    }
-}
-
 void aodv_socket_init(void)
 {
 	struct sockaddr_in aodv_addr;
 	struct ifreq ifval;
-	u8_t on = 1;
-	u8_t tos = IPTOS_LOWDELAY;
-	u32_t bufsize = SOCK_RECVBUF_SIZE;
+	s32_t on = 1;
+	s32_t tos = IPTOS_LOWDELAY;
+	s32_t bufsize = SOCK_RECVBUF_SIZE;
 	socklen_t optlen = sizeof(bufsize);
 	
 	if(!this_host.dev.enabled)
+	{
 		printf("Interface not enabled!\n");
+		exit(-1);
+	}
 
 	this_host.dev.sock = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if(this_host.dev.sock < 0)
 	{
-		printf("Socket init failed!\n");
+		perror("Socket init failed!");
 		exit(-1);
 	}
 
@@ -60,42 +51,43 @@ void aodv_socket_init(void)
 	aodv_addr.sin_port = htons(AODV_PORT);
 	aodv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
-	if(bind(this_host.dev.sock, (struct sockaddr *)&aodv_addr, sizeof(struct sockaddr)))
+	if(bind(this_host.dev.sock, (struct sockaddr *)&aodv_addr, sizeof(struct sockaddr)) < 0)
 	{
-		printf("Bind error!\n");
+		perror("Bind failed!");
 		exit(-1);
 	}
 
-	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_BROADCAST, &on, sizeof(u8_t)) < 0)
+	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_BROADCAST, &on, sizeof(s32_t)) < 0)
 	{
-		printf("SO_BROADCAST failed!\n");
+		perror("SO_BROADCAST failed!");
 		exit(-1);
 	}	
 
 	memset(&ifval, 0, sizeof(struct ifreq));
-	strcpy(ifval.ifr_name, &this_host.dev.ifname);
+	strcpy(ifval.ifr_name, this_host.dev.ifname);
 
 	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_BINDTODEVICE, &ifval, sizeof(struct ifreq)) < 0)
 	{
 		printf("SO_BINDTODEVICE %s failed!\n", this_host.dev.ifname);
+		perror("");
 		exit(-1);
 	}
 
-	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_PRIORITY, &tos, sizeof(u8_t)) < 0)//u8_t or s8_t
+	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_PRIORITY, &tos, sizeof(s32_t)) < 0)//u8_t or s8_t
 	{
-		printf("Set SO_PRIORITY failed!\n");
+		perror("Set SO_PRIORITY failed!\n");
 		exit(-1);
 	}
 	
-	if(setsockopt(this_host.dev.sock, SOL_IP, IP_RECVTTL, &on, sizeof(u8_t)) < 0)
+	if(setsockopt(this_host.dev.sock, SOL_IP, IP_RECVTTL, &on, sizeof(s32_t)) < 0)
 	{
-		printf("Set IP_RECVTTL failed!\n");
+		perror("Set IP_RECVTTL failed!\n");
 		exit(-1);
 	}
 
-	if(setsockopt(this_host.dev.sock, SOL_IP, IP_PKTINFO, &on, sizeof(u8_t)) < 0)
+	if(setsockopt(this_host.dev.sock, SOL_IP, IP_PKTINFO, &on, sizeof(s32_t)) < 0)
 	{
-		printf("Set IP_PKTINFO failed!\n");
+		perror("Set IP_PKTINFO failed!\n");
 		exit(-1);
 	}
 
@@ -120,13 +112,13 @@ void aodv_socket_init(void)
 	num_rerr = 0;
 }
 
-u8_t *aodv_socket_new_msg(void)
+s8_t *aodv_socket_new_msg(void)
 {
 	memset(send_buf, '\0', SEND_BUF_SIZE);
 	return send_buf;
 }
 
-void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, u32_t len, u8_t ttl, struct dev_info *dev)
+void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t ttl, struct dev_info *dev)
 {
 	struct timeval now;
 
@@ -140,9 +132,9 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, u32_t len, u8_t t
 	dest_addr.sin_addr = dest;
 	dest_addr.sin_port = htons(AODV_PORT);	
 
-	if(setsockopt(dev->sock, SOL_IP, IP_TTL, &ttl, sizeof(u8_t)) < 0)
+	if(setsockopt(dev->sock, SOL_IP, IP_TTL, &ttl, sizeof(ttl)) < 0)
 	{	
-		printf("Error setting ttl!\n");
+		perror("Error setting ttl!\n");
 		return;
 	}
 	
@@ -200,10 +192,10 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, u32_t len, u8_t t
 
 	if(dest.s_addr == AODV_BROADCAST)
 		gettimeofday(&this_host.last_broadcast_time, NULL);
-		
 	if(sendto(dev->sock, send_buf, len, 0, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr)) < 0)
 	{
 		printf("Failed send to %s\n", inet_ntoa(dest));
+		perror("");
 		return;
 	}
 
@@ -215,7 +207,7 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 	if((aodv_msg->type == AODV_RREP) && (ttl == 1) && (dest.s_addr == AODV_BROADCAST))
 		aodv_msg->type = AODV_HELLO;
 
-	//neighbor_add(aodv_msg, src);
+	//neighbor_add(aodv_msg, src);//for compile
 
 	switch(aodv_msg->type)
 	{
@@ -247,12 +239,12 @@ void aodv_socket_read(s32_t fd)
 	struct msghdr msg;
 	struct cmsghdr *cmsg;
 	struct iovec iov;
-	s8_t ctrlbuf[CMSG_SPACE(sizeof(int)) + CMSG_SPACE(sizeof(struct in_pktinfo))];
+	s8_t ctrlbuf[CMSG_SPACE(sizeof(s32_t)) + CMSG_SPACE(sizeof(struct in_pktinfo))];
 	struct sockaddr_in src_addr;
 
 	dest.s_addr = -1;
 
-	iov.iov_base = rece_buf;
+	iov.iov_base = recv_buf;
 	iov.iov_len = RECE_BUF_SIZE;
 	msg.msg_name = &src_addr;
 	msg.msg_namelen = sizeof(src_addr);
@@ -270,15 +262,41 @@ void aodv_socket_read(s32_t fd)
 
 	src.s_addr = src_addr.sin_addr.s_addr;
 
+	for(cmsg = CMSG_FIRSTHDR(&msg); cmsg != NULL; cmsg = CMSG_NXTHDR(&msg, cmsg))
+	{
+		if (cmsg->cmsg_level == SOL_IP)
+		{
+			if(cmsg->cmsg_type == IP_TTL) 
+				ttl = *(CMSG_DATA(cmsg));
+			if(cmsg->cmsg_type == IP_PKTINFO)
+			{
+				struct in_pktinfo *pi = (struct in_pktinfo *)CMSG_DATA(cmsg);
+				dest.s_addr = pi->ipi_addr.s_addr;
+			}
+		}
+	}
+
+    if (ttl < 0)
+	{
+		printf("No TTL, package ignored!\n");
+		return;
+    }	
+
 	if(this_host.dev.enabled && !memcmp(&src, &this_host.dev.ipaddr, sizeof(struct in_addr)))
 	{
 		printf("A local package returns to us again!\n");
 		return;
 	}
 	
-	aodv_msg = (AODV_msg *)rece_buf;
+	aodv_msg = (AODV_msg *)recv_buf;
 
 	aodv_socket_package_process(aodv_msg, len, src, dest, ttl);
 
 	//Only one device, no device choose
+}
+
+s8_t *aodv_socket_queue_msg(AODV_msg *aodv_msg, s32_t len)
+{
+	memcpy((s8_t *)send_buf, aodv_msg, len);
+	return send_buf;
 }

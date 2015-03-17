@@ -8,6 +8,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <sys/types.h>
+#include <errno.h>
 
 typedef unsigned char u8_t;
 typedef signed   char s8_t;
@@ -27,12 +28,14 @@ typedef signed   int  s32_t;
 #define RREQ_RATELIMIT 10
 #define RERR_RATELIMIT 10
 
+#define IFNAMESIZE 16
+
 struct dev_info 
 {
 	u8_t enabled;
 	s32_t sock;           //socket associated with this device
 
-	s8_t ifname;
+	s8_t ifname[IFNAMESIZE];
 	struct in_addr ipaddr;
 	struct in_addr netmask;
 	struct in_addr broadcast;
