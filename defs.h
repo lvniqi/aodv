@@ -30,6 +30,8 @@ typedef signed   int  s32_t;
 
 #define IFNAMESIZE 16
 
+#define max(x, y) ((x) > (y) ? (x):(y))
+
 struct dev_info 
 {
 	u8_t enabled;
@@ -45,6 +47,7 @@ struct host_info// no need for other variables in example
 {
 	u32_t seqno;
 	u32_t rreq_id;
+	struct timeval last_forward_time;
 	struct timeval last_broadcast_time;
 	struct dev_info dev;
 };

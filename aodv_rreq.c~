@@ -4,8 +4,13 @@
 #include "timer_queue.h"
 #include "parameters.h"
 #include "list.h"
+#include "seek_list.h"
+#include "aodv_rrep.h"
+#include "aodv_timeout.h"
 #include <netinet/in.h>
 #include <sys/time.h>
+
+extern s32_t expanding_ring_search;
 
 static list_t rreq_records = {&rreq_records, &rreq_records};
 static list_t rreq_blacklists = {&rreq_blacklists, &rreq_blacklists};
@@ -105,13 +110,13 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 		return;
 	}
 
-	if(rreq_check_blacklist(ip_src))
+	if(rreq_blacklist_check(ip_src))
 	{
 		printf("prev hop of RREQ is in the blacklist, ignoring!\n");
 		return;
 	}
 
-	if(rreq_check_record(rreq_orig, rreq_id))
+	if(rreq_record_check(rreq_orig, rreq_id))
 	{
 		printf("We have a visiter which we just sended him out!\n ");
 		return;
@@ -129,7 +134,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 
 	life = PATH_DISCOVERY_TIME - 2 * rreq_new_hopcnt * NODE_TRAVERSAL_TIME;
 
-	rev_rt = rt_table_find(rreq_orig);
+	rev_rt = rt_table_check(rreq_orig);
 
 	if(rev_rt == NULL)
 	{
@@ -162,7 +167,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 	}
 	else
 	{
-		fwd_rt = rt_table_find(rreq_dest);
+		fwd_rt = rt_table_check(rreq_dest);
 		if(fwd_rt && fwd_rt->state == VALID && !rreq->d)
 		{
 			struct timeval now;
@@ -206,7 +211,7 @@ struct rreq_record *rreq_record_insert(struct in_addr orig_addr, u32_t rreq_id)
 {
 	struct rreq_record *rec;
 
-	rec = rreq_check_record(orig_addr, rreq_id);
+	rec = rreq_record_check(orig_addr, rreq_id);
 
 	if(rec)
 	{
@@ -235,7 +240,7 @@ struct rreq_record *rreq_record_insert(struct in_addr orig_addr, u32_t rreq_id)
 	return rec;
 }
 
-struct rreq_record *rreq_check_record(struct in_addr orig_addr, u32_t rreq_id)
+struct rreq_record *rreq_record_check(struct in_addr orig_addr, u32_t rreq_id)
 {
 	list_t *pos;
 	struct rreq_record *curr;
@@ -254,7 +259,7 @@ struct rreq_blacklist *rreq_blacklist_insert(struct in_addr dest_addr)
 {
 	struct rreq_blacklist *bl;
 
-	bl = rreq_check_blacklist(dest_addr);
+	bl = rreq_blacklist_check(dest_addr);
 
 	if(bl)
 	{
@@ -282,7 +287,7 @@ struct rreq_blacklist *rreq_blacklist_insert(struct in_addr dest_addr)
 	return bl;
 }
 
-struct rreq_blacklist *rreq_check_blacklist(struct in_addr dest_addr)
+struct rreq_blacklist *rreq_blacklist_check(struct in_addr dest_addr)
 {
 	list_t *pos;
 	struct rreq_blacklist *curr;
@@ -298,14 +303,95 @@ struct rreq_blacklist *rreq_check_blacklist(struct in_addr dest_addr)
 
 }
 
-/*void rreq_route_discovery(struct in_addr dest_addr, u8_t flags, struct ip_data *ipd)
+void rreq_route_discovery(struct in_addr dest_addr, u8_t flags)
 {
+	struct timeval now;
+	rt_table_t *rt;
+	seek_list_t *seek_entry;
+	u32_t dest_seqno;
+	s32_t ttl;
 
+	gettimeofday(&now, NULL);
+
+	if(seek_list_check(dest_addr))
+	{
+		printf("We have sended a RREQ already!\n");
+		return;
+	}
+
+	rt = rt_table_check(dest_addr);//We have an route entry
+
+	ttl = NET_DIAMETER;
+
+	if(!rt)//No route, set dest_seqno = 0,why not set the u flag?
+	{
+		dest_seqno = 0;
+		if(expanding_ring_search)
+			ttl = TTL_START;
+	}
+	else
+	{
+		dest_seqno = rt->dest_seqno;
+		if(expanding_ring_search)
+			ttl = rt->hopcnt + TTL_INCREMENT;
+		
+		if(timeval_diff(&rt->rt_timer.timeout, &now) < (2 * NET_TRAVERSAL_TIME))
+			rt_table_update_timeout(rt, 2 * NET_TRAVERSAL_TIME);
+	}
+
+	rreq_send(dest_addr, dest_seqno, ttl, flags);
+
+	seek_entry = seek_list_insert(dest_addr, dest_seqno, ttl, flags);
+
+	if(expanding_ring_search)
+		timer_set_timeout(&seek_entry->seek_timer, RING_TRAVERSAL_TIME);
+	else
+		timer_set_timeout(&seek_entry->seek_timer, NET_TRAVERSAL_TIME);
+
+	printf("Seeking %s ttl= %d\n", inet_ntoa(dest_addr), ttl);
+} 
+
+void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr)
+{
+	struct timeval now;
+	seek_list_t *seek_entry;
+	rt_table_t *rt_entry;
+	s32_t ttl;
+	u8_t flags = 0;
+
+	if(!rt)
+		return;
+	if(seek_list_check(rt->dest_addr))
+		return;
+	if(!(rt->flags & RT_REPAIR))//yes or no?flags:do not permit to repair?
+		return;
+
+	gettimeofday(&now, NULL);
+
+	printf("Repairing route to %s\n", inet_ntoa(rt->dest_addr));
+
+	rt_entry = rt_table_check(src_addr);
+
+	if(rt_entry)
+		ttl = (s32_t)(max(rt->hopcnt, 0.5 * rt_entry->hopcnt) + LOCAL_ADD_TTL);
+	else
+		ttl = rt->hopcnt + LOCAL_ADD_TTL;
+
+	printf("%s, rreq_ttl= %d, dest_hcnt= %d\n", inet_ntoa(rt->dest_addr), ttl, rt->hopcnt);
+
+	rt->rt_timer.handler = route_expire_timeout;
+
+	if(timeval_diff(&rt->rt_timer.timeout, &now) < (2 * NET_TRAVERSAL_TIME))
+		rt_table_update_timeout(rt, 2 * NET_TRAVERSAL_TIME);
+
+	rreq_send(rt->dest_addr, rt->dest_seqno, ttl, flags);
+
+	seek_entry = seek_list_insert(rt->dest_addr, rt->dest_seqno, ttl, flags);
+
+	if(expanding_ring_search)
+		timer_set_timeout(&seek_entry->seek_timer, 2 * ttl * NODE_TRAVERSAL_TIME);
+	else
+		timer_set_timeout(&seek_entry->seek_timer, NET_TRAVERSAL_TIME);
+
+	printf("Seeking %s ttl= %d\n", inet_ntoa(rt->dest_addr), ttl);
 }
-*/
-/*
-void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr, struct ip_data *ipd)
- {
- 
- }
- */

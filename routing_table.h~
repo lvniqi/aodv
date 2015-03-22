@@ -41,8 +41,29 @@ typedef struct
 	list_t prenodes;
 }rt_table_t;
 
-rt_table_t *rt_table_find(struct in_addr rreq_orig);
-rt_table_t *rt_table_insert(struct in_addr rreq_orig, struct in_addr ip_src, u32_t rreq_new_hopcnt, u32_t rreq_orig_seqno, u32_t life, u8_t state, u8_t flags);
-rt_table_t *rt_table_update(rt_table_t *rev_rt, struct in_addr ip_src, u32_t rreq_new_hopcnt, u32_t rreq_orig_seqno, u32_t life, u8_t state, u8_t flags);
+#define RT_TABLESIZE 64
+#define RT_TABLEMASK (RT_TABLESIZE - 1)
+
+struct routing_table
+{
+	u32_t num_entries;
+	u32_t num_active;
+	list_t tbl[RT_TABLESIZE];
+};
+
+struct routing_table rt_tbl;
+
+rt_table_t *rt_table_check(struct in_addr dest);
+rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags);
+rt_table_t *rt_table_update(rt_table_t *rt, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags);
+void rt_table_init(void);
+void rt_table_destroy(void);
+rt_table_t *rt_table_update_timeout(rt_table_t *rt, u32_t lifetime);
+void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt);
+s32_t rt_table_invalidate(rt_table_t *rt);
+void rt_table_delete(rt_table_t *rt);
+void prenode_add(rt_table_t *rt, struct in_addr addr);
+void prenode_remove(rt_table_t *rt, struct in_addr addr);
+void prenode_list_destroy(rt_table_t *rt);
 
 #endif

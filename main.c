@@ -1,5 +1,6 @@
 #include "defs.h"
 #include "aodv_socket.h"
+#include "parameters.h"
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -8,6 +9,11 @@
 
 s32_t wait_on_reboot = 1;
 s32_t ratelimit = 1;
+s32_t expanding_ring_search = 1;
+s32_t llfeedback = 1;
+s32_t receive_n_hellos = 0;
+s32_t local_repair = 0;
+s32_t delete_period = DELETE_PERIOD_HELLO;
 
 int main(int argc, char *argv[])
 {

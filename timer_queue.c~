@@ -85,6 +85,6 @@ void timer_add(struct timer *t)
 				break;
 		}
 
-		list_insert(pos->prev, &t->l);
+		list_add(pos->prev, &t->l);
 	}
 }

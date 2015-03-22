@@ -21,8 +21,8 @@ s32_t timer_init(struct timer *t, timeout_func_t f, void *data)
 
 void timer_set_timeout(struct timer *t, long msec)
 {
-//	if(t->used)
-//		timer_remove(t);//Is this necessary?!what will happened if add some new timeout?
+	if(t->used)
+		timer_remove(t);//Is this necessary?!what will happened if add some new timeout?   I know, it have to be like this,because the list have to sort, so remove and re_add can sort
 	
 	gettimeofday(&t->timeout, NULL);
 

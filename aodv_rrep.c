@@ -1,0 +1,234 @@
+#include "aodv_rrep.h"
+#include "aodv_socket.h"
+#include "routing_table.h"
+#include "timer_queue.h"
+#include "aodv_rerr.h"
+#include "parameters.h"
+#include "aodv_neighbor.h"
+
+RREP *rrep_create(u8_t flags, u8_t prefix, u8_t hopcnt, struct in_addr dest_addr, u32_t dest_seqno, struct in_addr orig_addr, u32_t life)
+{
+	RREP *rrep;
+
+	rrep = (RREP *)aodv_socket_new_msg();
+	rrep->type = AODV_RREP;
+	rrep->res1 = 0;
+	rrep->res2 = 0;
+	rrep->prefix = prefix;
+	rrep->hopcnt = hopcnt;
+	rrep->dest_addr = dest_addr.s_addr;
+	rrep->dest_seqno = htonl(dest_seqno);
+	rrep->orig_addr = orig_addr.s_addr;
+	rrep->lifetime = htonl(life);
+
+	if(flags & RREP_REPAIR)
+		rrep->r = 1;
+	if(flags & RREP_ACK)
+		rrep->a = 1;
+
+	return rrep;
+}
+
+RREP_ack *rrep_ack_create(void)
+{
+	RREP_ack *rrep_ack;
+
+	rrep_ack = (RREP_ack *)aodv_socket_new_msg();
+	rrep_ack->type = AODV_RREP_ACK;
+
+	return rrep_ack;
+}
+
+void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src, struct in_addr ip_dest)
+{
+	rt_table_t *rt;
+
+	rt = rt_table_check(ip_src);
+
+	if(rt == NULL)
+	{
+		printf("No RREQ_ACK expected for %s\n", inet_ntoa(ip_src));
+		return;
+	}
+
+	printf("Received RREP_ACK from %s\n", inet_ntoa(ip_src));
+
+	timer_remove(&rt->ack_timer);
+}
+
+void rrep_send(RREP *rrep, rt_table_t *rev_rt, rt_table_t *fwd_rt,s32_t len)
+{
+	u8_t rrep_flags = 0;
+	struct in_addr dest;
+
+	if(!rev_rt)
+	{
+		printf("Cannot send RREP, rev_rt = NULL\n");
+		return;
+	}
+
+	dest.s_addr = rrep->dest_addr;
+
+	if((rev_rt->state == VALID) && (rev_rt->flags & RT_UNIDIR))// || (rev_rt->hopcnt == 1))//No unidir_hack
+	{
+		rt_table_t *neighbor = rt_table_check(rev_rt->next_hop);
+
+		if(neighbor && neighbor->state == VALID && !neighbor->ack_timer.used)
+		{
+			rrep_flags |= RREP_ACK;
+			neighbor->flags |= RT_UNIDIR;
+
+			timer_remove(&neighbor->hello_timer);
+			neighbor_link_break(neighbor);
+
+			printf("Link to %s unidirectional!\n", inet_ntoa(neighbor->dest_addr));
+
+			timer_set_timeout(&neighbor->ack_timer, NEXT_HOP_WAIT);
+		}
+	}
+
+	printf("Sending RREP to next hop %s about %s->%s\n", inet_ntoa(rev_rt->next_hop), inet_ntoa(rev_rt->dest_addr), inet_ntoa(dest));
+	aodv_socket_send((AODV_msg *)rrep, rev_rt->next_hop, len, MAXTTL, &this_host.dev);
+
+	if(fwd_rt)
+	{
+		prenode_add(fwd_rt, rev_rt->next_hop);
+		prenode_add(rev_rt, fwd_rt->next_hop);
+	}
+
+	//No optimized_hellos
+}
+
+void rrep_forward(RREP *rrep, s32_t len, rt_table_t *rev_rt, rt_table_t *fwd_rt, s32_t ttl)
+{
+	if(!fwd_rt || !rev_rt)
+	{
+		printf("Could not forward RREP because of NULL route!\n");
+		return;
+	}
+
+	if(!rrep)
+	{
+		printf("No RREP to forward!\n");
+		return;
+	}
+
+	printf("Forwarding RREP to %s\n", inet_ntoa(rev_rt->next_hop));
+
+	rt_table_t *neighbor;
+
+	if(rev_rt->dest_addr.s_addr != rev_rt->next_hop.s_addr)
+		neighbor = rt_table_check(rev_rt->next_hop);
+	else
+		neighbor = rev_rt;
+
+	if(neighbor && !neighbor->ack_timer.used)
+	{
+		rrep->a = 1;
+		neighbor->flags |= RT_UNIDIR;
+
+		timer_set_timeout(&neighbor->ack_timer, NEXT_HOP_WAIT);
+	}
+
+	rrep = (RREP *)aodv_socket_queue_msg((AODV_msg *)rrep, len);
+	rrep->hopcnt = fwd_rt->hopcnt;
+
+	aodv_socket_send((AODV_msg *)rrep, rev_rt->next_hop, len, ttl, &this_host.dev);
+
+	prenode_add(fwd_rt, rev_rt->next_hop);
+	prenode_add(rev_rt, fwd_rt->next_hop);
+
+	rt_table_update_timeout(rev_rt, ACTIVE_ROUTE_TIMEOUT);
+}
+
+void rrep_process(RREP *rrep, s32_t len, struct in_addr ip_src, struct in_addr ip_dest, s32_t ip_ttl)
+{
+	u32_t rrep_lifetime, rrep_seqno, rrep_new_hcnt;
+	u8_t pre_repair_hcnt = 0, pre_repair_flags = 0;
+	rt_table_t *fwd_rt, *rev_rt;
+	s32_t rt_flags = 0;
+	struct in_addr rrep_dest, rrep_orig;
+
+	rrep_dest.s_addr = rrep->dest_addr;
+	rrep_orig.s_addr = rrep->orig_addr;
+	rrep_seqno = ntohl(rrep->dest_seqno);
+	rrep_lifetime = ntohl(rrep->lifetime);
+
+	rrep_new_hcnt = rrep->hopcnt + 1;
+
+	if(len < (s32_t)RREP_SIZE)
+	{
+		printf("IP data filed too short (%d bytes), from %s to %s\n", len, inet_ntoa(ip_src), inet_ntoa(ip_dest));
+		return;
+	}
+
+	if(rrep_dest.s_addr == this_host.dev.ipaddr.s_addr)
+		return;
+
+	printf("RREP from %s about %s->%s\n", inet_ntoa(ip_src), inet_ntoa(rrep_orig), inet_ntoa(rrep_dest));
+
+	//check if we should make a forward route
+	fwd_rt = rt_table_check(rrep_dest);
+	rev_rt = rt_table_check(rrep_orig);
+
+	if(!fwd_rt)
+	{
+		fwd_rt = rt_table_insert(rrep_dest, ip_src, rrep_new_hcnt, rrep_seqno, rrep_lifetime, VALID, rt_flags);
+	}
+	else if(fwd_rt->dest_seqno == 0 || (s32_t)rrep_seqno > (s32_t)fwd_rt->dest_seqno || (rrep_seqno == fwd_rt->dest_seqno && (fwd_rt->state == INVALID || fwd_rt->flags & RT_UNIDIR || rrep_new_hcnt < fwd_rt->hopcnt)))
+	{
+		pre_repair_hcnt = fwd_rt->hopcnt;
+		pre_repair_flags = fwd_rt->flags;
+
+		fwd_rt = rt_table_update(fwd_rt, ip_src, rrep_new_hcnt, rrep_seqno, rrep_lifetime, VALID, rt_flags | fwd_rt->flags);
+	}
+	else
+	{
+		if(fwd_rt->hopcnt > 1)
+		{
+			printf("Dropping RREP, fwd_rt->hopcnt= %d, fwd_rt->seqno= %d\n", fwd_rt->hopcnt, fwd_rt->dest_seqno);
+		}
+
+		return;
+	}
+
+	if(rrep->a)
+	{
+		RREP_ack *rrep_ack;
+
+		rrep_ack = rrep_ack_create();
+		aodv_socket_send((AODV_msg *)rrep_ack, fwd_rt->next_hop, NEXT_HOP_WAIT, MAXTTL, &this_host.dev);
+		rrep->a = 0;
+	}
+
+	if(rrep_orig.s_addr == this_host.dev.ipaddr.s_addr)//RREP for us?????
+	{
+		if(pre_repair_flags & RT_REPAIR)
+		{
+			if(fwd_rt->hopcnt > pre_repair_hcnt)
+			{
+				RERR *rerr;
+				u8_t rerr_flags = 0;
+				struct in_addr dest;
+
+				dest.s_addr = AODV_BROADCAST;
+
+				rerr_flags |= RERR_NODELETE;
+				rerr = rerr_create(rerr_flags, fwd_rt->dest_addr, fwd_rt->dest_seqno);
+				
+				if(fwd_rt->nprenode)
+					aodv_socket_send((AODV_msg *)rerr, dest, RERR_CALC_SIZE(rerr), 1, &this_host.dev);
+			}
+		}
+	}
+	else
+	{
+		if(rev_rt && rev_rt->state == VALID)
+			rrep_forward(rrep, len, rev_rt, fwd_rt, --ip_ttl);
+		else
+			printf("No route to forward the RREP!\n");
+	}
+
+	//hello_start();//?
+}
+

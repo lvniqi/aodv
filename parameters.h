@@ -6,7 +6,7 @@
 #define K                       5
 
 /* Dynamic configuration values. Default numbers are for HELLO messages. */
-#define ACTIVE_ROUTE_TIMEOUT active_route_timeout
+#define ACTIVE_ROUTE_TIMEOUT 3000  //active_route_timeout  //define in kaodv_mod.c
 #define TTL_START TTL_START_HELLO //ttl_start
 #define DELETE_PERIOD delete_period
 
