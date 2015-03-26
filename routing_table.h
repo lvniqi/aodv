@@ -14,14 +14,14 @@
 #define RT_INV_SEQNO     0x4
 #define RT_INET_DEST     0x8
 
-#define FIRST_PREC(h) ((prenode_t *)((h).next))
+#define FIRST_PREC(h) ((precursor_t *)((h).next))
 #define seqno_incr(s) ((s == 0) ? 0 : ((s == 0xffffffff) ? s = 1 : s++))
 
-typedef struct prenode
+typedef struct precursor
 {
 	list_t l;
 	struct in_addr neighbor;
-}prenode_t;
+}precursor_t;
 
 typedef u32_t hash_value;
 
@@ -40,8 +40,8 @@ typedef struct
 	struct timeval last_hello_time;
 	u8_t hello_cnt;
 	hash_value hash;
-	u32_t nprenode;
-	list_t prenodes;
+	u32_t nprecursor;
+	list_t precursors;
 }rt_table_t;
 
 #define RT_TABLESIZE 64
@@ -65,8 +65,8 @@ rt_table_t *rt_table_update_timeout(rt_table_t *rt, u32_t lifetime);
 void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt);
 s32_t rt_table_invalidate(rt_table_t *rt);
 void rt_table_delete(rt_table_t *rt);
-void prenode_add(rt_table_t *rt, struct in_addr addr);
-void prenode_remove(rt_table_t *rt, struct in_addr addr);
-void prenode_list_destroy(rt_table_t *rt);
+void precursor_add(rt_table_t *rt, struct in_addr addr);
+void precursor_remove(rt_table_t *rt, struct in_addr addr);
+void precursor_list_destroy(rt_table_t *rt);
 
 #endif

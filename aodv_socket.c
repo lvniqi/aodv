@@ -106,14 +106,13 @@ void aodv_socket_init(void)
 		}
 		if(bufsize < RECE_BUF_SIZE)
 		{
-			printf("Could not set receive buffer size!\n");
+			perror("Could not set receive buffer size!\n");
 			exit(-1);
 		}
 	}
 
 	//bind_callback_fun// I use only one interface, it have not to bind the callback_fun, it calls when use 
 	
-
 	num_rreq = 0;
 	num_rerr = 0;
 }
@@ -127,7 +126,6 @@ s8_t *aodv_socket_new_msg(void)
 void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t ttl, struct dev_info *dev)
 {
 	struct timeval now;
-
 	struct sockaddr_in dest_addr;
 	
 	if(wait_on_reboot && aodv_msg->type == AODV_RREP)//We cannot send any RREP when rebooting
@@ -213,7 +211,7 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 	if((aodv_msg->type == AODV_RREP) && (ttl == 1) && (dest.s_addr == AODV_BROADCAST))
 		aodv_msg->type = AODV_HELLO;
 
-	neighbor_add(aodv_msg, src);//for compile
+	neighbor_add(aodv_msg, src);
 
 	switch(aodv_msg->type)
 	{

@@ -39,7 +39,7 @@ RREP_ack *rrep_ack_create(void)
 	return rrep_ack;
 }
 
-void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src)
+void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src, struct in_addr ip_dest)
 {
 	rt_table_t *rt;
 

@@ -24,7 +24,7 @@ RREQ *rreq_create(u8_t flags, struct in_addr dest_addr, u32_t dest_seqno, struct
 	rreq->res1 = 0;
 	rreq->res2 = 0;
 	rreq->hopcnt = 0;
-	rreq->rreq_id = htonl(++this_host.rreq_id);//this_host.rreq_id++ or ++this_host.rreq_id? same?
+	rreq->rreq_id = htonl(this_host.rreq_id++);//this_host.rreq_id++ or ++this_host.rreq_id? same?
 	rreq->dest_addr = dest_addr.s_addr;
 	rreq->dest_seqno = htonl(dest_seqno);
 	rreq->orig_addr = orig_addr.s_addr;
@@ -102,7 +102,10 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 		return;
 	}
 
-	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %s, ttl= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), inet_ntoa(rreq_dest), ip_ttl);
+//	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %d %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), rreq->dest_addr, inet_ntoa(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
+
+	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), inet_ntoa(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
+
 
 	if(len < (s32_t)RREQ_SIZE)
 	{
@@ -127,7 +130,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 	
 	/*
 	 *
-	 * we can check if there is any extension sended with the RREQ package, but I think I don`t want to add some new extensionnow, so write the check code when I use it.
+	 * we can check if there is any extension sended with the RREQ package, but I think I don`t want to add some new extension now, so write the check code when I use it.
 	 *
 	 *
 	 */
@@ -138,7 +141,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 
 	if(rev_rt == NULL)
 	{
-		printf("Creating REVERSE route entry, RREQ orig: %s", inet_ntoa(rreq_orig));
+		printf("Creating REVERSE route entry, RREQ orig: %s\n", inet_ntoa(rreq_orig));
 		rev_rt = rt_table_insert(rreq_orig, ip_src, rreq_new_hopcnt, rreq_orig_seqno, life, VALID, 0);
 	}	
 	else
@@ -201,7 +204,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 //				rrep = rrep_create(0, 0, rev_rt->hopcnt, rev_rt->dest_addr, rev_rt->dest_seqno, fwd_rt->dest_addr, lifetime);
 //				rrep_send(rrep, fwd_rt, rev_rt, RREP_SIZE);
 
-				printf("Sending G_RREP to %s with rte to %s", inet_ntoa(rreq_dest), inet_ntoa(rreq_orig));
+				printf("Sending G_RREP to %s with rte to %s\n", inet_ntoa(rreq_dest), inet_ntoa(rreq_orig));
 			}
 		}
 	}
@@ -233,7 +236,7 @@ struct rreq_record *rreq_record_insert(struct in_addr orig_addr, u32_t rreq_id)
 
 	list_push_front(&rreq_records, &rec->l);
 
-	printf("Buffering RREQ %s rreq_id= %d time= %u", inet_ntoa(orig_addr), rreq_id, PATH_DISCOVERY_TIME);
+	printf("Buffering RREQ %s rreq_id= %d time= %u\n", inet_ntoa(orig_addr), rreq_id, PATH_DISCOVERY_TIME);
 
 	timer_set_timeout(&rec->rec_timer, PATH_DISCOVERY_TIME);
 

@@ -14,6 +14,9 @@
 #define RT_INV_SEQNO     0x4
 #define RT_INET_DEST     0x8
 
+#define FIRST_PREC(h) ((prenode_t *)((h).next))
+#define seqno_incr(s) ((s == 0) ? 0 : ((s == 0xffffffff) ? s = 1 : s++))
+
 typedef struct prenode
 {
 	list_t l;

@@ -1,6 +1,7 @@
 #include "defs.h"
 #include "aodv_socket.h"
 #include "parameters.h"
+#include "aodv_rreq.h"
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -17,7 +18,7 @@ s32_t delete_period = DELETE_PERIOD_HELLO;
 
 int main(int argc, char *argv[])
 {
-/*	fd_set listener;
+	fd_set listener;
 	struct timeval tv;
 	s32_t retval;
 	struct in_addr dest;
@@ -27,10 +28,17 @@ int main(int argc, char *argv[])
 	this_host.last_broadcast_time.tv_sec = 0;
 	this_host.last_broadcast_time.tv_usec = 0;
 	this_host.dev.enabled = 1;
+
+#ifdef MT
 	strcpy(this_host.dev.ifname, "br-lan");
 	this_host.dev.ipaddr.s_addr = inet_addr("192.168.1.1");
-		
+#else
+	strcpy(this_host.dev.ifname, "wlan0");
+	this_host.dev.ipaddr.s_addr = inet_addr("192.168.1.100");
+#endif
+
 	aodv_socket_init();
+	rt_table_init();
 
 	printf("Init succeed!\n");
 
@@ -40,22 +48,17 @@ int main(int argc, char *argv[])
 		rreq_send(dest, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
 	}
 
-	FD_ZERO(&listener);
-	FD_SET(this_host.dev.sock, &listener);
 	while(1)
 	{
+		FD_ZERO(&listener);
+		FD_SET(this_host.dev.sock, &listener);
+
 		tv.tv_sec = tv.tv_usec = 0;	
 		retval = select(this_host.dev.sock + 1, &listener, NULL, NULL, &tv);
 		if(retval < 0)
 			printf("Select failed!\n");
 		if(FD_ISSET(this_host.dev.sock, &listener))
 			aodv_socket_read(this_host.dev.sock);
-	}*/
-
-	while(1)
-	{
-
 	}
-
 	return 0;
 }

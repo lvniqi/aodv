@@ -107,12 +107,12 @@ void local_repair_timeout(void *arg)
 	//nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
 	
 
-	if(rt->nprenode)//if we have prenode //Write myself
+	if(rt->nprecursor)//if we have precursor //Write myself
 	{
 		rerr = rerr_create(0, rt->dest_addr, rt->dest_seqno);
 		
-		if(rt->nprenode == 1)
-			rerr_dest = FIRST_PREC(rt->prenodes)->neighbor;
+		if(rt->nprecursor == 1)
+			rerr_dest = FIRST_PREC(rt->precursors)->neighbor;
 		else
 			rerr_dest.s_addr = AODV_BROADCAST;
 		
@@ -121,7 +121,7 @@ void local_repair_timeout(void *arg)
 		printf("Sending RERR about %s to %s\n", inet_ntoa(rt->dest_addr), inet_ntoa(rerr_dest));
 	}
 
-	prenode_list_destroy(rt);
+	precursor_list_destroy(rt);
 
 	rt->rt_timer.handler = route_delete_timeout;
 	timer_set_timeout(&rt->rt_timer, DELETE_PERIOD);
@@ -145,7 +145,7 @@ void route_expire_timeout(void *arg)
 	else
 	{
 		rt_table_invalidate(rt);
-		prenode_list_destroy(rt);
+		precursor_list_destroy(rt);
 	}
 }
 

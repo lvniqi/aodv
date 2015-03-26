@@ -7,3 +7,5 @@
 2015.3.18 写了seek_list大部分，基本上完成了，写了几个routing_table 的函数，加了一大堆timer_handler都没写函数体，没编译
 2015.3.19 完成了routing_table函数，rreq部分也基本完成了，写了一部分超时回调函数，加入了hello, neighbor, rrep文件，没编译
 2015.3.20 完成了rerr，部分neighbor还没写完，用户部分还有hello、rrep和部分timeout_handler，没编译
+2015.3.21 完成了neighnor
+2015.3.22 基本完成了用户层代码，编译通过了，后面要对照说明文档仔细研究下流程

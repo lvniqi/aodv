@@ -175,7 +175,7 @@ void hello_timeout(void *arg)
 
 	gettimeofday(&now, NULL);
 
-	printf("HELLO FAILURE %s, last HELLO: %d\n", inet_ntoa(rt->dest_addr), timeval_diff(&now, &rt->last_hello_time));
+	printf("HELLO FAILURE %s, last HELLO: %ld\n", inet_ntoa(rt->dest_addr), timeval_diff(&now, &rt->last_hello_time));
 
 	if(rt && rt->state == VALID && !(rt->flags & RT_UNIDIR))
 	{

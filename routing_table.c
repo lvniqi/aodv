@@ -105,18 +105,18 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 	rt->hopcnt = hops;
 	rt->hash = hash;
 	rt->state = state;
-
+	
 	timer_init(&rt->rt_timer, &route_expire_timeout, rt);
 	timer_init(&rt->ack_timer, &rrep_ack_timeout, rt);
 	timer_init(&rt->hello_timer, &hello_timeout, rt);
-
+	
 	rt->last_hello_time.tv_sec = 0;
 	rt->last_hello_time.tv_usec = 0;
 	rt->hello_cnt = 0;
 
-	rt->nprenode = 0;
+	rt->nprecursor = 0;
 
-	list_init_head(&rt->prenodes);
+	list_init_head(&rt->precursors);
 
 	rt_tbl.num_entries++;
 
@@ -326,7 +326,7 @@ void rt_table_delete(rt_table_t *rt)
 
 	list_remove(&rt->l);
 
-	prenode_list_destroy(rt);
+	precursor_list_destroy(rt);
 
 	if(rt->state == VALID)
 	{
@@ -345,74 +345,74 @@ void rt_table_delete(rt_table_t *rt)
 
 /********************************************************************************/
 
-/*prenode part*/
+/*precursor part*/
 
-void prenode_add(rt_table_t *rt, struct in_addr addr)
+void precursor_add(rt_table_t *rt, struct in_addr addr)
 {
-	prenode_t *pr;
+	precursor_t *pr;
 	list_t *pos;
 
 	if(!rt)
 		return;
 
-	list_for_each(pos, &rt->prenodes)
+	list_for_each(pos, &rt->precursors)
 	{
-		pr = (prenode_t *)pos;
+		pr = (precursor_t *)pos;
 
 		if(pr->neighbor.s_addr == addr.s_addr)
 			return;
 	}
 
-	if((pr = (prenode_t *)malloc(sizeof(prenode_t))) == NULL)
+	if((pr = (precursor_t *)malloc(sizeof(precursor_t))) == NULL)
 	{
 		printf("Prenode malloc failed!\n");
 		exit(-1);
 	}
 
-	printf("Adding prenode %s to rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
+	printf("Adding precursor %s to rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
 
 	pr->neighbor.s_addr = addr.s_addr;
 
-	list_add(&rt->prenodes, &pr->l);
-	rt->nprenode++;
+	list_add(&rt->precursors, &pr->l);
+	rt->nprecursor++;
 }
 
-void prenode_remove(rt_table_t *rt, struct in_addr addr)
+void precursor_remove(rt_table_t *rt, struct in_addr addr)
 {
 	list_t *pos, *tmp;
-	prenode_t *pr;
+	precursor_t *pr;
 
 	if(!rt)
 		return;
 
-	list_for_each_safe(pos, tmp, &rt->prenodes)
+	list_for_each_safe(pos, tmp, &rt->precursors)
 	{
-		pr = (prenode_t *)pos;
+		pr = (precursor_t *)pos;
 		if(pr->neighbor.s_addr == addr.s_addr)
 		{
-			printf("Removing prenode %s from rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
+			printf("Removing precursor %s from rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
 
 			list_remove(pos);
-			rt->nprenode--;
+			rt->nprecursor--;
 			free(pr);
 			return;
 		}
 	}
 }
 
-void prenode_list_destroy(rt_table_t *rt)
+void precursor_list_destroy(rt_table_t *rt)
 {
 	list_t *pos, *tmp;
-	prenode_t *pr;
+	precursor_t *pr;
 
 	if(!rt)
 		return;
 
-	list_for_each_safe(pos, tmp, &rt->prenodes)
+	list_for_each_safe(pos, tmp, &rt->precursors)
 	{
-		pr = (prenode_t *)pos;
+		pr = (precursor_t *)pos;
 		list_remove(pos);
-		rt->nprenode--;
+		rt->nprecursor--;
 		free(pr);
 	}
 }

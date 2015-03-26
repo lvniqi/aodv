@@ -29,6 +29,20 @@ static inline long timeval_diff(struct timeval *t1, struct timeval *t2)
     }
 }
 
+static inline s32_t timeval_add_msec(struct timeval *t, unsigned long msec)
+{
+	unsigned long long add;
+
+	if(!t)
+		return -1;
+
+	add = t->tv_usec + (msec * 1000);
+	t->tv_sec += add / 1000000;
+	t->tv_usec = add % 1000000;
+
+	return 0;
+}
+
 s32_t timer_init(struct timer *t, timeout_func_t f, void *data);
 void timer_set_timeout(struct timer *t, long msec);
 s32_t timer_remove(struct timer *t);

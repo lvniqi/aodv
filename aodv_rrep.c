@@ -92,8 +92,8 @@ void rrep_send(RREP *rrep, rt_table_t *rev_rt, rt_table_t *fwd_rt,s32_t len)
 
 	if(fwd_rt)
 	{
-		prenode_add(fwd_rt, rev_rt->next_hop);
-		prenode_add(rev_rt, fwd_rt->next_hop);
+		precursor_add(fwd_rt, rev_rt->next_hop);
+		precursor_add(rev_rt, fwd_rt->next_hop);
 	}
 
 	//No optimized_hellos
@@ -135,8 +135,8 @@ void rrep_forward(RREP *rrep, s32_t len, rt_table_t *rev_rt, rt_table_t *fwd_rt,
 
 	aodv_socket_send((AODV_msg *)rrep, rev_rt->next_hop, len, ttl, &this_host.dev);
 
-	prenode_add(fwd_rt, rev_rt->next_hop);
-	prenode_add(rev_rt, fwd_rt->next_hop);
+	precursor_add(fwd_rt, rev_rt->next_hop);
+	precursor_add(rev_rt, fwd_rt->next_hop);
 
 	rt_table_update_timeout(rev_rt, ACTIVE_ROUTE_TIMEOUT);
 }
@@ -216,7 +216,7 @@ void rrep_process(RREP *rrep, s32_t len, struct in_addr ip_src, struct in_addr i
 				rerr_flags |= RERR_NODELETE;
 				rerr = rerr_create(rerr_flags, fwd_rt->dest_addr, fwd_rt->dest_seqno);
 				
-				if(fwd_rt->nprenode)
+				if(fwd_rt->nprecursor)
 					aodv_socket_send((AODV_msg *)rerr, dest, RERR_CALC_SIZE(rerr), 1, &this_host.dev);
 			}
 		}

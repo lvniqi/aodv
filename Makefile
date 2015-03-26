@@ -1,15 +1,22 @@
+ifdef MT
 CC = mipsel-linux-gcc
-CCFLAGS = -Wall
+CCFLAGS = -Wall -DMT
+TARGET = aodv_mt7620
+else
+CC = gcc
+CCFLAGS = -Wall -DPC
+TARGET = aodv_x86
+endif
+
 INCLUDES =
 LIBS = 
 SRCS = $(shell echo *.c)
 OBJS = $(SRCS:.c = .o)
-TARGET = aodv
 
 $(TARGET) : $(OBJS)
 	$(CC) $(CCFLAGS) $(INCLUDES) $(LIBS) $^ -o $@ 
 
-main.o: main.c defs.h aodv_socket.h parameters.h
+main.o: main.c defs.h aodv_socket.h parameters.h aodv_rreq.h
 aodv_rreq.o: aodv_rreq.c main.c defs.h aodv_rreq.h list.h aodv_socket.h routing_table.h timer_queue.h parameters.h aodv_timeout.h seek_list.h aodv_rrep.h
 aodv_rrep.o: aodv_rrep.c main.c defs.h aodv_rrep.h aodv_socket.h routing_table.h timer_queue.h aodv_rerr.h parameters.h aodv_neighbor.h
 aodv_rerr.o: aodv_rerr.c defs.h aodv_rerr.h aodv_socket.h routing_table.h list.h

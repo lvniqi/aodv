@@ -79,7 +79,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 			
 			rt->dest_seqno = rerr_dest_seqno;//Update the seqno
 
-			if(rt->nprenode && !(rt->flags & RT_REPAIR))
+			if(rt->nprecursor && !(rt->flags & RT_REPAIR))
 			{
 				if(!new_rerr)
 				{
@@ -91,8 +91,8 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 					new_rerr = rerr_create(flags, rt->dest_addr, rt->dest_seqno);
 
 					printf("Added %s as unreachable, seqno= %d\n", inet_ntoa(rt->dest_addr), rt->dest_seqno);
-					if(rt->nprenode == 1)//if the dest_addr is all the same(single one), use unicast, otherwise all use boardcast
-						rerr_unicast_dest = FIRST_PREC(rt->prenodes)->neighbor;
+					if(rt->nprecursor == 1)//if the dest_addr is all the same(single one), use unicast, otherwise all use boardcast
+						rerr_unicast_dest = FIRST_PREC(rt->precursors)->neighbor;
 
 				}
 				else
@@ -103,10 +103,10 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 					if(rerr_unicast_dest.s_addr)
 					{
 						list_t *pos;
-						prenode_t *ptr;
-						list_for_each(pos, &rt->prenodes)
+						precursor_t *ptr;
+						list_for_each(pos, &rt->precursors)
 						{
-							ptr = (prenode_t *)pos;
+							ptr = (precursor_t *)pos;
 							if(ptr->neighbor.s_addr != rerr_unicast_dest.s_addr)
 							{
 								rerr_unicast_dest.s_addr = 0;
@@ -118,11 +118,11 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 			}
 			else
 			{
-				printf("Not sending RERR, no prenodes or route is in repairing!\n");
+				printf("Not sending RERR, no precursors or route is in repairing!\n");
 			}
 
 			if(rt->state == INVALID)
-				prenode_list_destroy(rt);
+				precursor_list_destroy(rt);
 		}
 		else
 		{

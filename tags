@@ -17,13 +17,13 @@ AODV_RREP_ACK	defs.h	22;"	d
 AODV_RREQ	defs.h	19;"	d
 AODV_msg	defs.h	/^}AODV_msg;$/;"	t	typeref:struct:__anon6
 BLACKLIST_TIMEOUT	parameters.h	26;"	d
-CC	Makefile	/^CC = mipsel-linux-gcc$/;"	m
+CC	Makefile	/^CC = gcc#mipsel-linux-gcc$/;"	m
 CCFLAGS	Makefile	/^CCFLAGS = -Wall$/;"	m
 DELETE_PERIOD	parameters.h	11;"	d
 DELETE_PERIOD_HELLO	parameters.h	21;"	d
 DELETE_PERIOD_LLF	parameters.h	16;"	d
 FIRST_PREC	routing_table.h	17;"	d
-HELLO_DELAY	aodv_hello.h	7;"	d
+HELLO_DELAY	aodv_hello.h	8;"	d
 HELLO_INTERVAL	parameters.h	27;"	d
 IFNAMESIZE	defs.h	31;"	d
 INCLUDES	Makefile	/^INCLUDES =$/;"	m
@@ -51,22 +51,22 @@ RERR_UDEST_NEXT	aodv_rerr.h	31;"	d
 RERR_UDEST_SIZE	aodv_rerr.h	27;"	d
 RERR_udest	aodv_rerr.h	/^}RERR_udest;$/;"	t	typeref:struct:__anon2
 RING_TRAVERSAL_TIME	parameters.h	37;"	d
-ROUTE_TIMEOUT_SLACK	aodv_hello.h	6;"	d
+ROUTE_TIMEOUT_SLACK	aodv_hello.h	7;"	d
 RREP	aodv_rrep.h	/^}RREP;$/;"	t	typeref:struct:__anon3
-RREP_ACK	aodv_rrep.h	30;"	d
-RREP_REPAIR	aodv_rrep.h	29;"	d
-RREP_SIZE	aodv_rrep.h	27;"	d
+RREP_ACK	aodv_rrep.h	32;"	d
+RREP_REPAIR	aodv_rrep.h	31;"	d
+RREP_SIZE	aodv_rrep.h	29;"	d
 RREP_ack	aodv_rrep.h	/^}RREP_ack;$/;"	t	typeref:struct:__anon4
 RREQ	aodv_rreq.h	/^}RREQ;$/;"	t	typeref:struct:__anon5
-RREQ_DEST_ONLY	aodv_rreq.h	33;"	d
-RREQ_GRATUITOUS	aodv_rreq.h	32;"	d
-RREQ_JOIN	aodv_rreq.h	30;"	d
+RREQ_DEST_ONLY	aodv_rreq.h	34;"	d
+RREQ_GRATUITOUS	aodv_rreq.h	33;"	d
+RREQ_JOIN	aodv_rreq.h	31;"	d
 RREQ_RATELIMIT	defs.h	28;"	d
 RREQ_RATELIMIT	parameters.h	39;"	d
-RREQ_REPAIR	aodv_rreq.h	31;"	d
+RREQ_REPAIR	aodv_rreq.h	32;"	d
 RREQ_RETRIES	parameters.h	38;"	d
-RREQ_SIZE	aodv_rreq.h	28;"	d
-RREQ_UNKNOWN_SEQNO	aodv_rreq.h	34;"	d
+RREQ_SIZE	aodv_rreq.h	29;"	d
+RREQ_UNKNOWN_SEQNO	aodv_rreq.h	35;"	d
 RT_INET_DEST	routing_table.h	15;"	d
 RT_INV_SEQNO	routing_table.h	14;"	d
 RT_REPAIR	routing_table.h	13;"	d
@@ -74,7 +74,7 @@ RT_TABLEMASK	routing_table.h	48;"	d
 RT_TABLESIZE	routing_table.h	47;"	d
 RT_UNIDIR	routing_table.h	12;"	d
 SEND_BUF_SIZE	aodv_socket.h	7;"	d
-SOCK_RECVBUF_SIZE	aodv_socket.c	14;"	d	file:
+SOCK_RECVBUF_SIZE	aodv_socket.c	17;"	d	file:
 SRCS	Makefile	/^SRCS = $(shell echo *.c)$/;"	m
 TARGET	Makefile	/^TARGET = aodv$/;"	m
 TIMEOUT_BUFFER	parameters.h	40;"	d
@@ -83,6 +83,8 @@ TTL_START	parameters.h	10;"	d
 TTL_START_HELLO	parameters.h	20;"	d
 TTL_START_LLF	parameters.h	15;"	d
 TTL_THRESHOLD	parameters.h	42;"	d
+TTL_VALUE	aodv_rreq.c	314;"	d	file:
+TTL_VALUE	aodv_timeout.c	38;"	d	file:
 VALID	routing_table.h	10;"	d
 _AODV_HELLO_H_	aodv_hello.h	2;"	d
 _AODV_NEIGHBOR_H_	aodv_neighbor.h	2;"	d
@@ -109,6 +111,7 @@ bl_timer	aodv_rreq.h	/^	struct timer bl_timer;$/;"	m	struct:rreq_blacklist	typer
 broadcast	defs.h	/^	struct in_addr broadcast;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 d	aodv_rreq.h	/^	u8_t d:1;$/;"	m	struct:__anon5
 data	timer_queue.h	/^	void *data;$/;"	m	struct:timer
+delete_period	main.c	/^s32_t delete_period = DELETE_PERIOD_HELLO;$/;"	v
 dest_addr	aodv_rerr.h	/^	u32_t dest_addr;$/;"	m	struct:__anon1
 dest_addr	aodv_rerr.h	/^	u32_t dest_addr;$/;"	m	struct:__anon2
 dest_addr	aodv_rrep.h	/^	u32_t dest_addr;$/;"	m	struct:__anon3
@@ -153,7 +156,7 @@ j	aodv_rreq.h	/^	u8_t j:1;$/;"	m	struct:__anon5
 l	aodv_rreq.h	/^	list_t l;$/;"	m	struct:rreq_blacklist
 l	aodv_rreq.h	/^	list_t l;$/;"	m	struct:rreq_record
 l	routing_table.h	/^	list_t l;$/;"	m	struct:__anon7
-l	routing_table.h	/^	list_t l;$/;"	m	struct:prenode
+l	routing_table.h	/^	list_t l;$/;"	m	struct:precursor
 l	seek_list.h	/^	list_t l;$/;"	m	struct:seek_list
 l	timer_queue.h	/^	list_t l;$/;"	m	struct:timer
 last_broadcast_time	defs.h	/^	struct timeval last_broadcast_time;$/;"	m	struct:host_info	typeref:struct:host_info::timeval
@@ -181,13 +184,13 @@ local_repair_timeout	aodv_timeout.c	/^void local_repair_timeout(void *arg)$/;"	f
 main	main.c	/^int main(int argc, char *argv[])$/;"	f
 max	defs.h	33;"	d
 n	aodv_rerr.h	/^	u8_t n:1;$/;"	m	struct:__anon1
-neighbor	routing_table.h	/^	struct in_addr neighbor;$/;"	m	struct:prenode	typeref:struct:prenode::in_addr
+neighbor	routing_table.h	/^	struct in_addr neighbor;$/;"	m	struct:precursor	typeref:struct:precursor::in_addr
 neighbor_add	aodv_neighbor.c	/^void neighbor_add(AODV_msg *aodv_msg, struct in_addr src)$/;"	f
 neighbor_link_break	aodv_neighbor.c	/^void neighbor_link_break(rt_table_t *rt)$/;"	f
 netmask	defs.h	/^	struct in_addr netmask;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 next	list.h	/^	struct list_t *prev, *next;$/;"	m	struct:list_t	typeref:struct:list_t::
 next_hop	routing_table.h	/^	struct in_addr next_hop;$/;"	m	struct:__anon7	typeref:struct:__anon7::in_addr
-nprenode	routing_table.h	/^	u32_t nprenode;$/;"	m	struct:__anon7
+nprecursor	routing_table.h	/^	u32_t nprecursor;$/;"	m	struct:__anon7
 num_active	routing_table.h	/^	u32_t num_active;$/;"	m	struct:routing_table
 num_entries	routing_table.h	/^	u32_t num_entries;$/;"	m	struct:routing_table
 num_rerr	aodv_socket.c	/^u32_t num_rerr;$/;"	v
@@ -196,13 +199,13 @@ orig_addr	aodv_rrep.h	/^	u32_t orig_addr;$/;"	m	struct:__anon3
 orig_addr	aodv_rreq.h	/^	struct in_addr orig_addr;$/;"	m	struct:rreq_record	typeref:struct:rreq_record::in_addr
 orig_addr	aodv_rreq.h	/^	u32_t orig_addr;$/;"	m	struct:__anon5
 orig_seqno	aodv_rreq.h	/^	u32_t orig_seqno;$/;"	m	struct:__anon5
+precursor	routing_table.h	/^typedef struct precursor$/;"	s
+precursor_add	routing_table.c	/^void precursor_add(rt_table_t *rt, struct in_addr addr)$/;"	f
+precursor_list_destroy	routing_table.c	/^void precursor_list_destroy(rt_table_t *rt)$/;"	f
+precursor_remove	routing_table.c	/^void precursor_remove(rt_table_t *rt, struct in_addr addr)$/;"	f
+precursor_t	routing_table.h	/^}precursor_t;$/;"	t	typeref:struct:precursor
+precursors	routing_table.h	/^	list_t precursors;$/;"	m	struct:__anon7
 prefix	aodv_rrep.h	/^	u8_t prefix:5;$/;"	m	struct:__anon3
-prenode	routing_table.h	/^typedef struct prenode$/;"	s
-prenode_add	routing_table.c	/^void prenode_add(rt_table_t *rt, struct in_addr addr)$/;"	f
-prenode_list_destroy	routing_table.c	/^void prenode_list_destroy(rt_table_t *rt)$/;"	f
-prenode_remove	routing_table.c	/^void prenode_remove(rt_table_t *rt, struct in_addr addr)$/;"	f
-prenode_t	routing_table.h	/^}prenode_t;$/;"	t	typeref:struct:prenode
-prenodes	routing_table.h	/^	list_t prenodes;$/;"	m	struct:__anon7
 prev	list.h	/^	struct list_t *prev, *next;$/;"	m	struct:list_t	typeref:struct:list_t::list_t
 r	aodv_rrep.h	/^	u8_t r:1;$/;"	m	struct:__anon3
 r	aodv_rreq.h	/^	u8_t r:1;$/;"	m	struct:__anon5
@@ -226,7 +229,7 @@ route_discovery_timeout	aodv_timeout.c	/^void route_discovery_timeout(void *arg)
 route_expire_timeout	aodv_timeout.c	/^void route_expire_timeout(void *arg)$/;"	f
 routing_table	routing_table.h	/^struct routing_table$/;"	s
 rrep_ack_create	aodv_rrep.c	/^RREP_ack *rrep_ack_create(void)$/;"	f
-rrep_ack_process	aodv_rrep.c	/^void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src)$/;"	f
+rrep_ack_process	aodv_rrep.c	/^void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src, struct in_addr ip_dest)$/;"	f
 rrep_ack_timeout	aodv_timeout.c	/^void rrep_ack_timeout(void *arg)$/;"	f
 rrep_create	aodv_rrep.c	/^RREP *rrep_create(u8_t flags, u8_t prefix, u8_t hopcnt, struct in_addr dest_addr, u32_t dest_seqno, struct in_addr orig_addr, u32_t life)$/;"	f
 rrep_forward	aodv_rrep.c	/^void rrep_forward(RREP *rrep, s32_t len, rt_table_t *rev_rt, rt_table_t *fwd_rt, s32_t ttl)$/;"	f
@@ -253,12 +256,14 @@ rreq_record_timeout	aodv_timeout.c	/^void rreq_record_timeout(void *arg)$/;"	f
 rreq_records	aodv_rreq.c	/^static list_t rreq_records = {&rreq_records, &rreq_records};$/;"	v	file:
 rreq_route_discovery	aodv_rreq.c	/^void rreq_route_discovery(struct in_addr dest_addr, u8_t flags)$/;"	f
 rreq_send	aodv_rreq.c	/^void rreq_send(struct in_addr dest_addr, u32_t dest_seqno, s32_t ttl, u8_t flags)$/;"	f
-rt_table_check	routing_table.c	/^rt_table_t *rt_table_check(struct in_addr rreq_orig)$/;"	f
+rt_table_check	routing_table.c	/^rt_table_t *rt_table_check(struct in_addr dest)$/;"	f
 rt_table_delete	routing_table.c	/^void rt_table_delete(rt_table_t *rt)$/;"	f
 rt_table_destroy	routing_table.c	/^void rt_table_destroy(void)$/;"	f
 rt_table_init	routing_table.c	/^void rt_table_init(void)$/;"	f
+rt_table_insert	routing_table.c	/^rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags)$/;"	f
 rt_table_invalidate	routing_table.c	/^s32_t rt_table_invalidate(rt_table_t *rt)\/\/route expiry and deletion$/;"	f
 rt_table_t	routing_table.h	/^}rt_table_t;$/;"	t	typeref:struct:__anon7
+rt_table_update	routing_table.c	/^rt_table_t *rt_table_update(rt_table_t *rt, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags)$/;"	f
 rt_table_update_route_timeouts	routing_table.c	/^void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt)$/;"	f
 rt_table_update_timeout	routing_table.c	/^rt_table_t *rt_table_update_timeout(rt_table_t *rt, u32_t lifetime)$/;"	f
 rt_tbl	routing_table.h	/^struct routing_table rt_tbl;$/;"	v	typeref:struct:routing_table

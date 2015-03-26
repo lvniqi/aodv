@@ -145,7 +145,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 		}
 		else
 		{
-			rerr_unicast_dest = AODV_BROADCAST;
+			rerr_unicast_dest.s_addr = AODV_BROADCAST;
 			aodv_socket_send((AODV_msg *)new_rerr, rerr_unicast_dest, RERR_CALC_SIZE(new_rerr), 1, &this_host.dev);
 		}
 

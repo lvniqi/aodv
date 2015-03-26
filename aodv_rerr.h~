@@ -26,7 +26,7 @@ typedef struct
 
 #define RERR_UDEST_SIZE sizeof(RERR_udest)
 
-#define RERR_CALC_SIZE(rerr)   (RERR_SIZE + (rerr->dest_count - 1) * RRER_UDEST_SIZE)
+#define RERR_CALC_SIZE(rerr)   (RERR_SIZE + (rerr->dest_count - 1) * RERR_UDEST_SIZE)
 #define RERR_UDEST_FIRST(rerr) (RERR_udest *)(&rerr->dest_addr)
 #define RERR_UDEST_NEXT(udest) (RERR_udest *)((s8_t *)udest + RERR_UDEST_SIZE)
 

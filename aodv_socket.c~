@@ -106,14 +106,13 @@ void aodv_socket_init(void)
 		}
 		if(bufsize < RECE_BUF_SIZE)
 		{
-			printf("Could not set receive buffer size!\n");
+			perror("Could not set receive buffer size!\n");
 			exit(-1);
 		}
 	}
 
 	//bind_callback_fun// I use only one interface, it have not to bind the callback_fun, it calls when use 
 	
-
 	num_rreq = 0;
 	num_rerr = 0;
 }
@@ -127,7 +126,6 @@ s8_t *aodv_socket_new_msg(void)
 void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t ttl, struct dev_info *dev)
 {
 	struct timeval now;
-
 	struct sockaddr_in dest_addr;
 	
 	if(wait_on_reboot && aodv_msg->type == AODV_RREP)//We cannot send any RREP when rebooting
@@ -213,8 +211,8 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 	if((aodv_msg->type == AODV_RREP) && (ttl == 1) && (dest.s_addr == AODV_BROADCAST))
 		aodv_msg->type = AODV_HELLO;
 
-	neighbor_add(aodv_msg, src);//for compile
-
+	//neighbor_add(aodv_msg, src);
+printf("RREQ\n");
 	switch(aodv_msg->type)
 	{
 		case AODV_HELLO :   hello_process((RREP *)aodv_msg, len);
@@ -229,7 +227,7 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 		case AODV_RERR :	rerr_process((RERR *)aodv_msg, len, src, dest);
 							printf("Received RERR package!\n");
 							break;
-		case AODV_RREP_ACK :rrep_ack_process((RREP_ACK *)aodv_msg, len, src, dest);
+		case AODV_RREP_ACK :rrep_ack_process((RREP_ack *)aodv_msg, len, src, dest);
 							printf("Received RREP_ACK package!\n");
 							break;
 		default :			printf("Unknown msg type %u received from %s to %s", aodv_msg->type, inet_ntoa(src), inet_ntoa(dest));
@@ -295,6 +293,8 @@ void aodv_socket_read(s32_t fd)
 	}
 	
 	aodv_msg = (AODV_msg *)recv_buf;
+
+	printf("processing!\n");
 
 	aodv_socket_package_process(aodv_msg, len, src, dest, ttl);
 

@@ -59,16 +59,16 @@ void neighbor_link_break(rt_table_t *rt)
 
 	rt_table_invalidate(rt);
 	
-	if(rt->nprenode && !(rt->flags & RT_REPAIR))
+	if(rt->nprecursor && !(rt->flags & RT_REPAIR))
 	{
 		rerr = rerr_create(0, rt->dest_addr, rt->dest_seqno);
 		printf("Added %s as a unreachable, seqno= %d\n", inet_ntoa(rt->dest_addr), rt->dest_seqno);
 
-		if(rt->nprenode == 1)
-			rerr_unicast_dest = FIRST_PREC(rt->prenodes)->neighbor;
+		if(rt->nprecursor == 1)
+			rerr_unicast_dest = FIRST_PREC(rt->precursors)->neighbor;
 	}
 	if(!(rt->flags &RT_REPAIR))
-		prenode_list_destroy(rt);
+		precursor_list_destroy(rt);
 
 	list_t *pos;
 	
@@ -91,14 +91,14 @@ void neighbor_link_break(rt_table_t *rt)
 
 				rt_table_invalidate(rt_u);
 
-				if(rt_u->nprenode)
+				if(rt_u->nprecursor)
 				{
 					if(!rerr)
 					{
 						rerr = rerr_create(0, rt_u->dest_addr, rt_u->dest_seqno);
 
-						if(rt_u->nprenode == 1)
-							rerr_unicast_dest = FIRST_PREC(rt_u->prenodes)->neighbor;
+						if(rt_u->nprecursor == 1)
+							rerr_unicast_dest = FIRST_PREC(rt_u->precursors)->neighbor;
 
 						printf("Added %s as unreachable, seqno= %d\n", inet_ntoa(rt_u->dest_addr), rt_u->dest_seqno);
 					}
@@ -109,10 +109,10 @@ void neighbor_link_break(rt_table_t *rt)
 						if(rerr_unicast_dest.s_addr)
 						{
 							list_t *pos;
-							prenode_t *ptr;
-							list_for_each(pos, &rt_u->prenodes)
+							precursor_t *ptr;
+							list_for_each(pos, &rt_u->precursors)
 							{
-								ptr = (prenode_t *)pos;
+								ptr = (precursor_t *)pos;
 								if(ptr->neighbor.s_addr != rerr_unicast_dest.s_addr)
 								{
 									rerr_unicast_dest.s_addr = 0;
@@ -124,7 +124,7 @@ void neighbor_link_break(rt_table_t *rt)
 						printf("Added %s as unreachable, seqno= %d\n", inet_ntoa(rt_u->dest_addr), rt_u->dest_seqno);
 					}
 				}
-				prenode_list_destroy(rt_u);
+				precursor_list_destroy(rt_u);
 			}
 		}
 	}
