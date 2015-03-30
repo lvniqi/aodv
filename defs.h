@@ -59,4 +59,7 @@ typedef struct
 	u8_t type;
 }AODV_msg;
 
+typedef void (*callback_func_t)(s32_t);
+extern s32_t attach_callback_func(s32_t fd, callback_func_t func);
+
 #endif

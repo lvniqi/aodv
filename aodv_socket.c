@@ -111,8 +111,12 @@ void aodv_socket_init(void)
 		}
 	}
 
-	//bind_callback_fun// I use only one interface, it have not to bind the callback_fun, it calls when use 
-	
+	if(attach_callback_func(this_host.dev.sock, aodv_socket_read) < 0)
+	{
+		printf("Attach socket handler failed!\n");
+		exit(-1);
+	}	
+
 	num_rreq = 0;
 	num_rerr = 0;
 }
@@ -149,47 +153,47 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t 
 		switch(aodv_msg->type)
 		{
 			case AODV_RREQ:
-							if(num_rreq == RREQ_RATELIMIT)//after RREQ_RATELIMIT, it should always be this branch
-							{
-								if(timeval_diff(&now, &rreq_ratelimit[0]) < 1000)
-								{
-									printf("RATELIMIT: Droppping RREQ %ld ms!\n", timeval_diff(&now, &rreq_ratelimit[0]));
-									return;
-								}
-								else
-								{
-									memmove(rreq_ratelimit, &rreq_ratelimit[1], sizeof(struct timeval) * (num_rreq - 1));
-									memcpy(&rreq_ratelimit[num_rreq - 1], &now, sizeof(struct timeval));
-									//move rreq_ratelimit[1]-[9] to rreq_ratelimit[0]-[8], copy now to rreq_ratelimit[9]
-								}
-							}
-							else
-							{
-								memcpy(&rreq_ratelimit[num_rreq], &now, sizeof(struct timeval));
-								num_rreq++;//it seems like num_rreq never reset after init
-							}
-							break;
+				if(num_rreq == RREQ_RATELIMIT)//after RREQ_RATELIMIT, it should always be this branch
+				{
+					if(timeval_diff(&now, &rreq_ratelimit[0]) < 1000)
+					{
+						printf("RATELIMIT: Droppping RREQ %ld ms!\n", timeval_diff(&now, &rreq_ratelimit[0]));
+						return;
+					}
+					else
+					{
+						memmove(rreq_ratelimit, &rreq_ratelimit[1], sizeof(struct timeval) * (num_rreq - 1));
+						memcpy(&rreq_ratelimit[num_rreq - 1], &now, sizeof(struct timeval));
+						//move rreq_ratelimit[1]-[9] to rreq_ratelimit[0]-[8], copy now to rreq_ratelimit[9]
+					}
+				}
+				else
+				{
+					memcpy(&rreq_ratelimit[num_rreq], &now, sizeof(struct timeval));
+					num_rreq++;//it seems like num_rreq never reset after init
+				}
+				break;
 			case AODV_RERR:
-							if(num_rerr == RERR_RATELIMIT)//after RERR_RATELIMIT, it should always be this branch
-							{
-								if(timeval_diff(&now, &rerr_ratelimit[0]) < 1000)
-								{
-									printf("RATELIMIT: Droppping RERR %ld ms!\n", timeval_diff(&now, &rerr_ratelimit[0]));
-									return;
-								}
-								else
-								{
-									memmove(rerr_ratelimit, &rerr_ratelimit[1], sizeof(struct timeval) * (num_rerr - 1));
-									memcpy(&rerr_ratelimit[num_rerr - 1], &now, sizeof(struct timeval));
-									//move rerr_ratelimit[1]-[9] to rerr_ratelimit[0]-[8], copy now to rerr_ratelimit[9]
-								}
-							}
-							else
-							{
-								memcpy(&rerr_ratelimit[num_rerr], &now, sizeof(struct timeval));
-								num_rerr++;//it seems like num_rerr never reset after init
-							}
-							break;
+				if(num_rerr == RERR_RATELIMIT)//after RERR_RATELIMIT, it should always be this branch
+				{
+					if(timeval_diff(&now, &rerr_ratelimit[0]) < 1000)
+					{
+						printf("RATELIMIT: Droppping RERR %ld ms!\n", timeval_diff(&now, &rerr_ratelimit[0]));
+						return;
+					}
+					else
+					{
+						memmove(rerr_ratelimit, &rerr_ratelimit[1], sizeof(struct timeval) * (num_rerr - 1));
+						memcpy(&rerr_ratelimit[num_rerr - 1], &now, sizeof(struct timeval));
+						//move rerr_ratelimit[1]-[9] to rerr_ratelimit[0]-[8], copy now to rerr_ratelimit[9]
+					}
+				}
+				else
+				{
+					memcpy(&rerr_ratelimit[num_rerr], &now, sizeof(struct timeval));
+					num_rerr++;//it seems like num_rerr never reset after init
+				}
+				break;
 
 		}
 	}

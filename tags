@@ -8,6 +8,9 @@ ACTIVE_ROUTE_TIMEOUT	parameters.h	9;"	d
 ACTIVE_ROUTE_TIMEOUT_HELLO	parameters.h	19;"	d
 ACTIVE_ROUTE_TIMEOUT_LLF	parameters.h	14;"	d
 ALLOWED_HELLO_LOSS	parameters.h	24;"	d
+AODVGRP_MAX	kaodv/kaodv_netlink.h	18;"	d
+AODVGRP_NOTIFY	kaodv/kaodv_netlink.h	/^  AODVGRP_NOTIFY = 1,$/;"	e	enum:__anon7
+AODVGRP_NOTIFY	kaodv/kaodv_netlink.h	14;"	d
 AODV_BROADCAST	defs.h	24;"	d
 AODV_HELLO	defs.h	18;"	d
 AODV_PORT	defs.h	26;"	d
@@ -16,9 +19,14 @@ AODV_RREP	defs.h	20;"	d
 AODV_RREP_ACK	defs.h	22;"	d
 AODV_RREQ	defs.h	19;"	d
 AODV_msg	defs.h	/^}AODV_msg;$/;"	t	typeref:struct:__anon6
+ATTR_BUFLEN	nl.c	365;"	d	file:
 BLACKLIST_TIMEOUT	parameters.h	26;"	d
-CC	Makefile	/^CC = gcc#mipsel-linux-gcc$/;"	m
-CCFLAGS	Makefile	/^CCFLAGS = -Wall$/;"	m
+BUFLEN	nl.c	36;"	d	file:
+CALLBACK_FUNCS	main.c	21;"	d	file:
+CC	Makefile	/^CC = gcc$/;"	m
+CC	Makefile	/^CC = mipsel-linux-gcc$/;"	m
+CCFLAGS	Makefile	/^CCFLAGS = -Wall -DMT$/;"	m
+CCFLAGS	Makefile	/^CCFLAGS = -Wall -DPC$/;"	m
 DELETE_PERIOD	parameters.h	11;"	d
 DELETE_PERIOD_HELLO	parameters.h	21;"	d
 DELETE_PERIOD_LLF	parameters.h	16;"	d
@@ -26,19 +34,47 @@ FIRST_PREC	routing_table.h	17;"	d
 HELLO_DELAY	aodv_hello.h	8;"	d
 HELLO_INTERVAL	parameters.h	27;"	d
 IFNAMESIZE	defs.h	31;"	d
-INCLUDES	Makefile	/^INCLUDES =$/;"	m
+INCLUDES	Makefile	/^INCLUDES = -I .\/kaodv$/;"	m
 INVALID	routing_table.h	9;"	d
 K	parameters.h	6;"	d
+KAODVM_ADDROUTE	kaodv/kaodv_netlink.h	/^	KAODVM_ADDROUTE,$/;"	e	enum:__anon8
+KAODVM_ADDROUTE	kaodv/kaodv_netlink.h	27;"	d
+KAODVM_BASE	kaodv/kaodv_netlink.h	/^	KAODVM_BASE = 100,$/;"	e	enum:__anon8
+KAODVM_BASE	kaodv/kaodv_netlink.h	25;"	d
+KAODVM_CONFIG	kaodv/kaodv_netlink.h	/^	KAODVM_CONFIG,$/;"	e	enum:__anon8
+KAODVM_CONFIG	kaodv/kaodv_netlink.h	43;"	d
+KAODVM_DEBUG	kaodv/kaodv_netlink.h	/^	KAODVM_DEBUG,$/;"	e	enum:__anon8
+KAODVM_DEBUG	kaodv/kaodv_netlink.h	45;"	d
+KAODVM_DELROUTE	kaodv/kaodv_netlink.h	/^	KAODVM_DELROUTE,$/;"	e	enum:__anon8
+KAODVM_DELROUTE	kaodv/kaodv_netlink.h	29;"	d
+KAODVM_MAX	kaodv/kaodv_netlink.h	47;"	d
+KAODVM_NOROUTE_FOUND	kaodv/kaodv_netlink.h	/^	KAODVM_NOROUTE_FOUND,$/;"	e	enum:__anon8
+KAODVM_NOROUTE_FOUND	kaodv/kaodv_netlink.h	37;"	d
+KAODVM_REPAIR	kaodv/kaodv_netlink.h	/^	KAODVM_REPAIR,$/;"	e	enum:__anon8
+KAODVM_REPAIR	kaodv/kaodv_netlink.h	35;"	d
+KAODVM_ROUTE_REQ	kaodv/kaodv_netlink.h	/^	KAODVM_ROUTE_REQ,$/;"	e	enum:__anon8
+KAODVM_ROUTE_REQ	kaodv/kaodv_netlink.h	33;"	d
+KAODVM_ROUTE_UPDATE	kaodv/kaodv_netlink.h	/^	KAODVM_ROUTE_UPDATE,$/;"	e	enum:__anon8
+KAODVM_ROUTE_UPDATE	kaodv/kaodv_netlink.h	39;"	d
+KAODVM_SEND_RERR	kaodv/kaodv_netlink.h	/^	KAODVM_SEND_RERR,$/;"	e	enum:__anon8
+KAODVM_SEND_RERR	kaodv/kaodv_netlink.h	41;"	d
+KAODVM_TIMEOUT	kaodv/kaodv_netlink.h	/^	KAODVM_TIMEOUT,$/;"	e	enum:__anon8
+KAODVM_TIMEOUT	kaodv/kaodv_netlink.h	31;"	d
+KAODV_RT_GW_ENCAP	kaodv/kaodv_netlink.h	89;"	d
+KAODV_RT_REPAIR	kaodv/kaodv_netlink.h	90;"	d
 LIBS	Makefile	/^LIBS = $/;"	m
 LOCAL_ADD_TTL	parameters.h	28;"	d
 MAX_REPAIR_TTL	parameters.h	29;"	d
 MY_ROUTE_TIMEOUT	parameters.h	30;"	d
+NETLINK_AODV	kaodv/kaodv_netlink.h	10;"	d
 NET_DIAMETER	parameters.h	31;"	d
 NET_TRAVERSAL_TIME	parameters.h	32;"	d
 NEXT_HOP_WAIT	parameters.h	33;"	d
 NODE_TRAVERSAL_TIME	parameters.h	34;"	d
 OBJS	Makefile	/^OBJS = $(SRCS:.c = .o)$/;"	m
 PATH_DISCOVERY_TIME	parameters.h	35;"	d
+PKT_INBOUND	kaodv/kaodv_netlink.h	93;"	d
+PKT_OUTBOUND	kaodv/kaodv_netlink.h	94;"	d
 RECE_BUF_SIZE	aodv_socket.h	6;"	d
 RERR	aodv_rerr.h	/^}RERR;$/;"	t	typeref:struct:__anon1
 RERR_CALC_SIZE	aodv_rerr.h	29;"	d
@@ -76,14 +112,15 @@ RT_UNIDIR	routing_table.h	12;"	d
 SEND_BUF_SIZE	aodv_socket.h	7;"	d
 SOCK_RECVBUF_SIZE	aodv_socket.c	17;"	d	file:
 SRCS	Makefile	/^SRCS = $(shell echo *.c)$/;"	m
-TARGET	Makefile	/^TARGET = aodv$/;"	m
+TARGET	Makefile	/^TARGET = aodv_mt7620$/;"	m
+TARGET	Makefile	/^TARGET = aodv_x86$/;"	m
 TIMEOUT_BUFFER	parameters.h	40;"	d
 TTL_INCREMENT	parameters.h	41;"	d
 TTL_START	parameters.h	10;"	d
 TTL_START_HELLO	parameters.h	20;"	d
 TTL_START_LLF	parameters.h	15;"	d
 TTL_THRESHOLD	parameters.h	42;"	d
-TTL_VALUE	aodv_rreq.c	314;"	d	file:
+TTL_VALUE	aodv_rreq.c	317;"	d	file:
 TTL_VALUE	aodv_timeout.c	38;"	d	file:
 VALID	routing_table.h	10;"	d
 _AODV_HELLO_H_	aodv_hello.h	2;"	d
@@ -94,74 +131,95 @@ _AODV_RREQ_H_	aodv_rreq.h	2;"	d
 _AODV_SOCKET_H_	aodv_socket.h	2;"	d
 _AODV_TIMEOUT_H_	aodv_timeout.h	2;"	d
 _DEFINE_H_	defs.h	2;"	d
+_KAODV_NETLINK_H_	kaodv/kaodv_netlink.h	2;"	d
 _LIST_H_	list.h	2;"	d
+_NL_H_	nl.h	2;"	d
 _PARAMS_H_	parameters.h	2;"	d
 _ROUTING_TABLE_H_	routing_table.h	2;"	d
 _SEEK_LIST_H_	seek_list.h	2;"	d
 _TIMER_QUEUE_H_	timer_queue.h	2;"	d
+__AODVGRP_MAX	kaodv/kaodv_netlink.h	/^  __AODVGRP_MAX$/;"	e	enum:__anon7
+__KAODV_MAX	kaodv/kaodv_netlink.h	/^	__KAODV_MAX,$/;"	e	enum:__anon8
 a	aodv_rrep.h	/^	u8_t a:1;$/;"	m	struct:__anon3
-ack_timer	routing_table.h	/^	struct timer ack_timer;$/;"	m	struct:__anon7	typeref:struct:__anon7::timer
+ack_timer	routing_table.h	/^	struct timer ack_timer;$/;"	m	struct:__anon10	typeref:struct:__anon10::timer
+active_route_timeout	kaodv/kaodv_netlink.h	/^	int active_route_timeout;$/;"	m	struct:kaodv_conf_msg
+addattr	nl.c	/^s32_t addattr(struct nlmsghdr *n, s32_t type, void *data, s32_t alen)$/;"	f
 aodv_socket_init	aodv_socket.c	/^void aodv_socket_init(void)$/;"	f
 aodv_socket_new_msg	aodv_socket.c	/^s8_t *aodv_socket_new_msg(void)$/;"	f
 aodv_socket_package_process	aodv_socket.c	/^void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr src, struct in_addr dest, s32_t ttl)$/;"	f
 aodv_socket_queue_msg	aodv_socket.c	/^s8_t *aodv_socket_queue_msg(AODV_msg *aodv_msg, s32_t len)$/;"	f
 aodv_socket_read	aodv_socket.c	/^void aodv_socket_read(s32_t fd)$/;"	f
 aodv_socket_send	aodv_socket.c	/^void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t ttl, struct dev_info *dev)$/;"	f
+aodvnl	nl.c	/^struct nlsock aodvnl;$/;"	v	typeref:struct:nlsock
+attach_callback_func	main.c	/^s32_t attach_callback_func(s32_t fd, callback_func_t func)$/;"	f
 bl_timer	aodv_rreq.h	/^	struct timer bl_timer;$/;"	m	struct:rreq_blacklist	typeref:struct:rreq_blacklist::timer
 broadcast	defs.h	/^	struct in_addr broadcast;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
+callback	main.c	/^static struct callback$/;"	s	file:
+callback_func_t	defs.h	/^typedef void (*callback_func_t)(s32_t);$/;"	t
+callbacks	main.c	/^}callbacks[CALLBACK_FUNCS];$/;"	v	typeref:struct:callback	file:
 d	aodv_rreq.h	/^	u8_t d:1;$/;"	m	struct:__anon5
 data	timer_queue.h	/^	void *data;$/;"	m	struct:timer
 delete_period	main.c	/^s32_t delete_period = DELETE_PERIOD_HELLO;$/;"	v
+dest	kaodv/kaodv_netlink.h	/^	u_int32_t dest;$/;"	m	struct:kaodv_rt_msg
 dest_addr	aodv_rerr.h	/^	u32_t dest_addr;$/;"	m	struct:__anon1
 dest_addr	aodv_rerr.h	/^	u32_t dest_addr;$/;"	m	struct:__anon2
 dest_addr	aodv_rrep.h	/^	u32_t dest_addr;$/;"	m	struct:__anon3
 dest_addr	aodv_rreq.h	/^	struct in_addr dest_addr;$/;"	m	struct:rreq_blacklist	typeref:struct:rreq_blacklist::in_addr
 dest_addr	aodv_rreq.h	/^	u32_t dest_addr;$/;"	m	struct:__anon5
-dest_addr	routing_table.h	/^	struct in_addr dest_addr;$/;"	m	struct:__anon7	typeref:struct:__anon7::in_addr
+dest_addr	routing_table.h	/^	struct in_addr dest_addr;$/;"	m	struct:__anon10	typeref:struct:__anon10::in_addr
 dest_addr	seek_list.h	/^	struct in_addr dest_addr;$/;"	m	struct:seek_list	typeref:struct:seek_list::in_addr
 dest_count	aodv_rerr.h	/^	u8_t dest_count;$/;"	m	struct:__anon1
 dest_seqno	aodv_rerr.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon1
 dest_seqno	aodv_rerr.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon2
 dest_seqno	aodv_rrep.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon3
 dest_seqno	aodv_rreq.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon5
-dest_seqno	routing_table.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon7
+dest_seqno	routing_table.h	/^	u32_t dest_seqno;$/;"	m	struct:__anon10
 dest_seqno	seek_list.h	/^	u32_t dest_seqno;$/;"	m	struct:seek_list
 dev	defs.h	/^	struct dev_info dev;$/;"	m	struct:host_info	typeref:struct:host_info::dev_info
 dev_info	defs.h	/^struct dev_info $/;"	s
 enabled	defs.h	/^	u8_t enabled;$/;"	m	struct:dev_info
 expanding_ring_search	main.c	/^s32_t expanding_ring_search = 1;$/;"	v
-flags	routing_table.h	/^	u8_t flags;$/;"	m	struct:__anon7
+fd	main.c	/^	s32_t fd;$/;"	m	struct:callback	file:
+flags	kaodv/kaodv_netlink.h	/^	u_int8_t flags;$/;"	m	struct:kaodv_rt_msg
+flags	routing_table.h	/^	u8_t flags;$/;"	m	struct:__anon10
 flags	seek_list.h	/^	u8_t flags;$/;"	m	struct:seek_list
+func	main.c	/^	callback_func_t func;$/;"	m	struct:callback	file:
 g	aodv_rreq.h	/^	u8_t g:1;$/;"	m	struct:__anon5
 handler	timer_queue.h	/^	timeout_func_t handler;$/;"	m	struct:timer
-hash	routing_table.h	/^	hash_value hash;$/;"	m	struct:__anon7
+hash	routing_table.h	/^	hash_value hash;$/;"	m	struct:__anon10
 hash_value	routing_table.h	/^typedef u32_t hash_value;$/;"	t
 hashing	routing_table.c	/^static u32_t hashing(struct in_addr *addr, hash_value *hash)$/;"	f	file:
-hello_cnt	routing_table.h	/^	u8_t hello_cnt;$/;"	m	struct:__anon7
+hello_cnt	routing_table.h	/^	u8_t hello_cnt;$/;"	m	struct:__anon10
 hello_process	aodv_hello.c	/^void hello_process(RREP *hello, s32_t len)$/;"	f
 hello_send	aodv_hello.c	/^void hello_send(void *arg)$/;"	f
 hello_start	aodv_hello.c	/^void hello_start(void)$/;"	f
 hello_stop	aodv_hello.c	/^void hello_stop(void)$/;"	f
 hello_timeout	aodv_timeout.c	/^void hello_timeout(void *arg)$/;"	f
 hello_timer	aodv_hello.c	/^static struct timer hello_timer;$/;"	v	typeref:struct:timer	file:
-hello_timer	routing_table.h	/^	struct timer hello_timer;$/;"	m	struct:__anon7	typeref:struct:__anon7::timer
+hello_timer	routing_table.h	/^	struct timer hello_timer;$/;"	m	struct:__anon10	typeref:struct:__anon10::timer
 hello_update_timeout	aodv_hello.c	/^void hello_update_timeout(rt_table_t *rt, struct timeval *now, long time)$/;"	f
 hopcnt	aodv_rrep.h	/^	u8_t hopcnt;$/;"	m	struct:__anon3
 hopcnt	aodv_rreq.h	/^	u8_t hopcnt;$/;"	m	struct:__anon5
-hopcnt	routing_table.h	/^	u8_t hopcnt;$/;"	m	struct:__anon7
+hopcnt	routing_table.h	/^	u8_t hopcnt;$/;"	m	struct:__anon10
 host_info	defs.h	/^struct host_info\/\/ no need for other variables in example$/;"	s
+ifindex	kaodv/kaodv_netlink.h	/^	int ifindex;$/;"	m	struct:kaodv_rt_msg
 ifname	defs.h	/^	s8_t ifname[IFNAMESIZE];$/;"	m	struct:dev_info
 ipaddr	defs.h	/^	struct in_addr ipaddr;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 j	aodv_rreq.h	/^	u8_t j:1;$/;"	m	struct:__anon5
+kaodv_conf_msg	kaodv/kaodv_netlink.h	/^typedef struct kaodv_conf_msg {$/;"	s
+kaodv_conf_msg_t	kaodv/kaodv_netlink.h	/^} kaodv_conf_msg_t;$/;"	t	typeref:struct:kaodv_conf_msg
+kaodv_msg_type_to_str	kaodv/kaodv_netlink.h	/^static inline char *kaodv_msg_type_to_str(int type)$/;"	f
+kaodv_rt_msg	kaodv/kaodv_netlink.h	/^typedef struct kaodv_rt_msg { $/;"	s
+kaodv_rt_msg_t	kaodv/kaodv_netlink.h	/^} kaodv_rt_msg_t;$/;"	t	typeref:struct:kaodv_rt_msg
 l	aodv_rreq.h	/^	list_t l;$/;"	m	struct:rreq_blacklist
 l	aodv_rreq.h	/^	list_t l;$/;"	m	struct:rreq_record
-l	routing_table.h	/^	list_t l;$/;"	m	struct:__anon7
+l	routing_table.h	/^	list_t l;$/;"	m	struct:__anon10
 l	routing_table.h	/^	list_t l;$/;"	m	struct:precursor
 l	seek_list.h	/^	list_t l;$/;"	m	struct:seek_list
 l	timer_queue.h	/^	list_t l;$/;"	m	struct:timer
 last_broadcast_time	defs.h	/^	struct timeval last_broadcast_time;$/;"	m	struct:host_info	typeref:struct:host_info::timeval
 last_forward_time	defs.h	/^	struct timeval last_forward_time;$/;"	m	struct:host_info	typeref:struct:host_info::timeval
-last_hello_time	routing_table.h	/^	struct timeval last_hello_time;$/;"	m	struct:__anon7	typeref:struct:__anon7::timeval
+last_hello_time	routing_table.h	/^	struct timeval last_hello_time;$/;"	m	struct:__anon10	typeref:struct:__anon10::timeval
 lifetime	aodv_rrep.h	/^	u32_t lifetime;$/;"	m	struct:__anon3
 list_add	list.c	/^void list_add(list_t *head, list_t *node)$/;"	f
 list_delete	list.c	/^static void list_delete(list_t *prev, list_t *next)$/;"	f	file:
@@ -179,18 +237,33 @@ list_t	list.h	/^typedef struct list_t$/;"	s
 list_t	list.h	/^}list_t;$/;"	t	typeref:struct:list_t
 list_unattached	list.c	/^u8_t list_unattached(const list_t *head)$/;"	f
 llfeedback	main.c	/^s32_t llfeedback = 1;$/;"	v
+local	nl.c	/^	struct sockaddr_nl local;$/;"	m	struct:nlsock	typeref:struct:nlsock::sockaddr_nl	file:
 local_repair	main.c	/^s32_t local_repair = 0;$/;"	v
 local_repair_timeout	aodv_timeout.c	/^void local_repair_timeout(void *arg)$/;"	f
 main	main.c	/^int main(int argc, char *argv[])$/;"	f
 max	defs.h	33;"	d
 n	aodv_rerr.h	/^	u8_t n:1;$/;"	m	struct:__anon1
+name	kaodv/kaodv_netlink.h	/^	char *name;	       $/;"	m	struct:__anon9
 neighbor	routing_table.h	/^	struct in_addr neighbor;$/;"	m	struct:precursor	typeref:struct:precursor::in_addr
 neighbor_add	aodv_neighbor.c	/^void neighbor_add(AODV_msg *aodv_msg, struct in_addr src)$/;"	f
 neighbor_link_break	aodv_neighbor.c	/^void neighbor_link_break(rt_table_t *rt)$/;"	f
 netmask	defs.h	/^	struct in_addr netmask;$/;"	m	struct:dev_info	typeref:struct:dev_info::in_addr
 next	list.h	/^	struct list_t *prev, *next;$/;"	m	struct:list_t	typeref:struct:list_t::
-next_hop	routing_table.h	/^	struct in_addr next_hop;$/;"	m	struct:__anon7	typeref:struct:__anon7::in_addr
-nprecursor	routing_table.h	/^	u32_t nprecursor;$/;"	m	struct:__anon7
+next_hop	routing_table.h	/^	struct in_addr next_hop;$/;"	m	struct:__anon10	typeref:struct:__anon10::in_addr
+nhop	kaodv/kaodv_netlink.h	/^	u_int32_t nhop;$/;"	m	struct:kaodv_rt_msg
+nl_cleanup	nl.c	/^void nl_cleanup(void)$/;"	f
+nl_init	nl.c	/^void nl_init(void)$/;"	f
+nl_kaodv_callback	nl.c	/^static void nl_kaodv_callback(s32_t sock)$/;"	f	file:
+nl_kernel_route	nl.c	/^s32_t nl_kernel_route(s32_t action, s32_t flags, s32_t family, s32_t index, struct in_addr *dest,  struct in_addr *nm, s32_t metric)$/;"	f
+nl_rt_callback	nl.c	/^static void nl_rt_callback(s32_t sock)$/;"	f	file:
+nl_send	nl.c	/^s32_t nl_send(struct nlsock *nl, struct nlmsghdr *n)$/;"	f
+nl_send_add_route_msg	nl.c	/^s32_t nl_send_add_route_msg(struct in_addr dest, struct in_addr next_hop, s32_t metric, u32_t lifetime, s32_t rt_flags, s32_t ifindex)$/;"	f
+nl_send_conf_msg	nl.c	/^s32_t nl_send_conf_msg(void)$/;"	f
+nl_send_del_route_msg	nl.c	/^s32_t nl_send_del_route_msg(struct in_addr dest, struct in_addr next_hop, s32_t metric)$/;"	f
+nl_send_no_route_found_msg	nl.c	/^s32_t nl_send_no_route_found_msg(struct in_addr dest)$/;"	f
+nlsock	nl.c	/^struct nlsock$/;"	s	file:
+nprecursor	routing_table.h	/^	u32_t nprecursor;$/;"	m	struct:__anon10
+nr_callbacks	main.c	/^static s32_t nr_callbacks = 0;$/;"	v	file:
 num_active	routing_table.h	/^	u32_t num_active;$/;"	m	struct:routing_table
 num_entries	routing_table.h	/^	u32_t num_entries;$/;"	m	struct:routing_table
 num_rerr	aodv_socket.c	/^u32_t num_rerr;$/;"	v
@@ -199,14 +272,18 @@ orig_addr	aodv_rrep.h	/^	u32_t orig_addr;$/;"	m	struct:__anon3
 orig_addr	aodv_rreq.h	/^	struct in_addr orig_addr;$/;"	m	struct:rreq_record	typeref:struct:rreq_record::in_addr
 orig_addr	aodv_rreq.h	/^	u32_t orig_addr;$/;"	m	struct:__anon5
 orig_seqno	aodv_rreq.h	/^	u32_t orig_seqno;$/;"	m	struct:__anon5
+peer	nl.c	/^struct sockaddr_nl peer;$/;"	v	typeref:struct:sockaddr_nl
 precursor	routing_table.h	/^typedef struct precursor$/;"	s
 precursor_add	routing_table.c	/^void precursor_add(rt_table_t *rt, struct in_addr addr)$/;"	f
 precursor_list_destroy	routing_table.c	/^void precursor_list_destroy(rt_table_t *rt)$/;"	f
 precursor_remove	routing_table.c	/^void precursor_remove(rt_table_t *rt, struct in_addr addr)$/;"	f
 precursor_t	routing_table.h	/^}precursor_t;$/;"	t	typeref:struct:precursor
-precursors	routing_table.h	/^	list_t precursors;$/;"	m	struct:__anon7
+precursors	routing_table.h	/^	list_t precursors;$/;"	m	struct:__anon10
 prefix	aodv_rrep.h	/^	u8_t prefix:5;$/;"	m	struct:__anon3
+prefix_length	nl.c	/^s32_t prefix_length(s32_t family, void *nm)$/;"	f
 prev	list.h	/^	struct list_t *prev, *next;$/;"	m	struct:list_t	typeref:struct:list_t::list_t
+qual_th	kaodv/kaodv_netlink.h	/^	int qual_th;$/;"	m	struct:kaodv_conf_msg
+qual_threshold	main.c	/^s32_t qual_threshold = 0;$/;"	v
 r	aodv_rrep.h	/^	u8_t r:1;$/;"	m	struct:__anon3
 r	aodv_rreq.h	/^	u8_t r:1;$/;"	m	struct:__anon5
 ratelimit	main.c	/^s32_t ratelimit = 1;$/;"	v
@@ -262,12 +339,13 @@ rt_table_destroy	routing_table.c	/^void rt_table_destroy(void)$/;"	f
 rt_table_init	routing_table.c	/^void rt_table_init(void)$/;"	f
 rt_table_insert	routing_table.c	/^rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags)$/;"	f
 rt_table_invalidate	routing_table.c	/^s32_t rt_table_invalidate(rt_table_t *rt)\/\/route expiry and deletion$/;"	f
-rt_table_t	routing_table.h	/^}rt_table_t;$/;"	t	typeref:struct:__anon7
+rt_table_t	routing_table.h	/^}rt_table_t;$/;"	t	typeref:struct:__anon10
 rt_table_update	routing_table.c	/^rt_table_t *rt_table_update(rt_table_t *rt, struct in_addr next, u32_t hops, u32_t seqno, u32_t lifetime, u8_t state, u8_t flags)$/;"	f
 rt_table_update_route_timeouts	routing_table.c	/^void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt)$/;"	f
 rt_table_update_timeout	routing_table.c	/^rt_table_t *rt_table_update_timeout(rt_table_t *rt, u32_t lifetime)$/;"	f
 rt_tbl	routing_table.h	/^struct routing_table rt_tbl;$/;"	v	typeref:struct:routing_table
-rt_timer	routing_table.h	/^	struct timer rt_timer;$/;"	m	struct:__anon7	typeref:struct:__anon7::timer
+rt_timer	routing_table.h	/^	struct timer rt_timer;$/;"	m	struct:__anon10	typeref:struct:__anon10::timer
+rtnl	nl.c	/^struct nlsock rtnl;$/;"	v	typeref:struct:nlsock
 s32_t	defs.h	/^typedef signed   int  s32_t;$/;"	t
 s8_t	defs.h	/^typedef signed   char s8_t;$/;"	t
 seek_list	seek_list.h	/^typedef struct seek_list$/;"	s
@@ -278,12 +356,16 @@ seek_list_t	seek_list.h	/^}seek_list_t;$/;"	t	typeref:struct:seek_list
 seek_timer	seek_list.h	/^	struct timer seek_timer;$/;"	m	struct:seek_list	typeref:struct:seek_list::timer
 send_buf	aodv_socket.c	/^s8_t send_buf[SEND_BUF_SIZE];$/;"	v
 seqno	defs.h	/^	u32_t seqno;$/;"	m	struct:host_info
+seqno	nl.c	/^	s32_t seqno;$/;"	m	struct:nlsock	file:
 seqno_incr	routing_table.h	18;"	d
 sl	seek_list.c	/^list_t sl = {&sl, &sl};$/;"	v
 sock	defs.h	/^	s32_t sock;           \/\/socket associated with this device$/;"	m	struct:dev_info
-state	routing_table.h	/^	u8_t state;$/;"	m	struct:__anon7
+sock	nl.c	/^	s32_t sock;$/;"	m	struct:nlsock	file:
+src	kaodv/kaodv_netlink.h	/^	u_int32_t src;$/;"	m	struct:kaodv_rt_msg
+state	routing_table.h	/^	u8_t state;$/;"	m	struct:__anon10
 tbl	routing_table.h	/^	list_t tbl[RT_TABLESIZE];$/;"	m	struct:routing_table
 this_host	defs.h	/^struct host_info this_host;$/;"	v	typeref:struct:host_info
+time	kaodv/kaodv_netlink.h	/^	long time;$/;"	m	struct:kaodv_rt_msg
 timeout	timer_queue.h	/^	struct timeval timeout;$/;"	m	struct:timer	typeref:struct:timer::timeval
 timeout_func_t	timer_queue.h	/^typedef void (*timeout_func_t)(void *);$/;"	t
 timer	timer_queue.h	/^struct timer\/\/timer_t conflicting declaration of sys-define$/;"	s
@@ -300,9 +382,14 @@ type	aodv_rrep.h	/^	u8_t type;$/;"	m	struct:__anon3
 type	aodv_rrep.h	/^	u8_t type;$/;"	m	struct:__anon4
 type	aodv_rreq.h	/^	u8_t type;$/;"	m	struct:__anon5
 type	defs.h	/^	u8_t type;$/;"	m	struct:__anon6
+type	kaodv/kaodv_netlink.h	/^	int type;$/;"	m	struct:__anon9
+type	kaodv/kaodv_netlink.h	/^	u_int8_t type;$/;"	m	struct:kaodv_rt_msg
+typenames	kaodv/kaodv_netlink.h	/^} typenames[KAODVM_MAX] = { $/;"	v	typeref:struct:__anon9
 u	aodv_rreq.h	/^	u8_t u:1;$/;"	m	struct:__anon5
 u32_t	defs.h	/^typedef unsigned int  u32_t;$/;"	t
 u8_t	defs.h	/^typedef unsigned char u8_t;$/;"	t
 used	timer_queue.h	/^	u8_t used;$/;"	m	struct:timer
 wait_on_reboot	main.c	/^s32_t wait_on_reboot = 1;$/;"	v
 wait_on_reboot_timeout	aodv_timeout.c	/^void wait_on_reboot_timeout(void *arg)$/;"	f
+worb_timer	main.c	/^struct timer worb_timer;$/;"	v	typeref:struct:timer
+worb_timer	nl.c	/^extern static timer worb_timer;$/;"	v	file:

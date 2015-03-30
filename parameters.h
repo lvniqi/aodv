@@ -6,8 +6,8 @@
 #define K                       5
 
 /* Dynamic configuration values. Default numbers are for HELLO messages. */
-#define ACTIVE_ROUTE_TIMEOUT 3000  //active_route_timeout  //define in kaodv_mod.c
-#define TTL_START TTL_START_HELLO //ttl_start
+#define ACTIVE_ROUTE_TIMEOUT active_route_timeout  //define in kaodv_mod.c
+#define TTL_START ttl_start
 #define DELETE_PERIOD delete_period
 
 /* Settings for Link Layer Feedback */
@@ -40,5 +40,9 @@
 #define TIMEOUT_BUFFER          2
 #define TTL_INCREMENT           2
 #define TTL_THRESHOLD           7
+
+extern s32_t active_route_timeout;
+extern s32_t ttl_start;
+extern s32_t delete_period;
 
 #endif

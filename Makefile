@@ -8,7 +8,7 @@ CCFLAGS = -Wall -DPC
 TARGET = aodv_x86
 endif
 
-INCLUDES =
+INCLUDES = -I ./kaodv
 LIBS = 
 SRCS = $(shell echo *.c)
 OBJS = $(SRCS:.c = .o)
@@ -29,6 +29,7 @@ routing_table.o: routing_table.c main.c defs.h routing_table.h list.h timer_queu
 timer_queue.o: timer_queue.c defs.h timer_queue.h list.h
 aodv_timeout.o: aodv_timeout.c main.c defs.h aodv_timeout.h aodv_rreq.h list.h seek_list.h routing_table.h parameters.h aodv_rerr.h aodv_neighbor.h aodv_hello.h aodv_rrep.h aodv_socket.h timer_queue.h
 seek_list.o: seek_list.c defs.h seek_list.h list.h timer_queue.h aodv_timeout.h
+nl.o: nl.c main.c defs.h nl.h kaodv_netlink.h aodv_rreq.h aodv_timeout.h routing_table.h aodv_hello.h parameters.h aodv_socket.h aodv_rerr.h
 
 .PHONY:clean 
 clean:

@@ -33,7 +33,7 @@ void neighbor_add(AODV_msg *aodv_msg, struct in_addr src)
 		rt_table_update(rt, src, 1, seqno, ACTIVE_ROUTE_TIMEOUT, VALID, rt->flags);
 	}
 
-	if(!llfeedback && rt->hello_timer.used)
+	if(rt->hello_timer.used)
 		hello_update_timeout(rt, &now, ALLOWED_HELLO_LOSS * HELLO_INTERVAL);
 }
 

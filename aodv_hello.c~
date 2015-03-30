@@ -132,6 +132,6 @@ void hello_process(RREP *hello, s32_t len)
 
 void hello_update_timeout(rt_table_t *rt, struct timeval *now, long time)
 {
-	timer_set_timeout(&rt->hello_timer, timer + HELLO_DELAY);
+	timer_set_timeout(&rt->hello_timer, time + HELLO_DELAY);
 	memcpy(&rt->last_hello_time, now, sizeof(struct timeval));
 }

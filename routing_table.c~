@@ -7,8 +7,6 @@
 #include "aodv_neighbor.h"
 #include <memory.h>
 
-extern s32_t llfeedback, delete_period;
-
 void rt_table_init(void)
 {
 	u32_t i;
@@ -79,7 +77,6 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 	hash_value hash;
 
 	index = hashing(&dest, &hash);
-	printf("index:%d\n", index);
 
 	list_for_each(pos, &rt_tbl.tbl[index])
 	{
@@ -232,14 +229,14 @@ void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt)
 
 	if(fwd_rt && fwd_rt->state == VALID)
 	{
-		if(llfeedback || (fwd_rt->flags & RT_INET_DEST) || (fwd_rt->hopcnt != 1) || fwd_rt->hello_timer.used)
+		if((fwd_rt->flags & RT_INET_DEST) || (fwd_rt->hopcnt != 1) || fwd_rt->hello_timer.used)
 		{
 			rt_table_update_timeout(fwd_rt, ACTIVE_ROUTE_TIMEOUT);
 		}
 
 		next_hop_rt = rt_table_check(fwd_rt->next_hop);
 
-		if(next_hop_rt && (next_hop_rt->state == VALID) && (next_hop_rt->dest_addr.s_addr != fwd_rt->dest_addr.s_addr) && (llfeedback || fwd_rt->hello_timer.used))
+		if(next_hop_rt && (next_hop_rt->state == VALID) && (next_hop_rt->dest_addr.s_addr != fwd_rt->dest_addr.s_addr) && (fwd_rt->hello_timer.used))
 		{
 			rt_table_update_timeout(next_hop_rt, ACTIVE_ROUTE_TIMEOUT);
 		}
@@ -247,14 +244,14 @@ void rt_table_update_route_timeouts(rt_table_t *fwd_rt, rt_table_t *rev_rt)
 
 	if(rev_rt && rev_rt->state == VALID)
 	{
-		if(llfeedback || (rev_rt->hello_cnt != 1) || rev_rt->hello_timer.used)
+		if((rev_rt->hello_cnt != 1) || rev_rt->hello_timer.used)
 		{
 			rt_table_update_timeout(rev_rt, ACTIVE_ROUTE_TIMEOUT);
 		}
 
 		next_hop_rt = rt_table_check(rev_rt->next_hop);
 
-		if(next_hop_rt && (next_hop_rt->state == VALID) && rev_rt && (next_hop_rt->dest_addr.s_addr != rev_rt->dest_addr.s_addr) && (llfeedback || rev_rt->hello_timer.used))
+		if(next_hop_rt && (next_hop_rt->state == VALID) && rev_rt && (next_hop_rt->dest_addr.s_addr != rev_rt->dest_addr.s_addr) && (rev_rt->hello_timer.used))
 		{
 			rt_table_update_timeout(next_hop_rt, ACTIVE_ROUTE_TIMEOUT);
 		}

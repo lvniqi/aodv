@@ -11,10 +11,41 @@
 s32_t wait_on_reboot = 1;
 s32_t ratelimit = 1;
 s32_t expanding_ring_search = 1;
-s32_t llfeedback = 1;
 s32_t receive_n_hellos = 0;
 s32_t local_repair = 0;
+s32_t qual_threshold = 0;
+
+s32_t active_route_timeout = ACTIVE_ROUTE_TIMEOUT_HELLO;
+s32_t ttl_start = TTL_START_HELLO;
 s32_t delete_period = DELETE_PERIOD_HELLO;
+
+struct timer worb_timer;
+
+#define CALLBACK_FUNCS 3
+
+static s32_t nr_callbacks = 0;
+
+static struct callback
+{
+	s32_t fd;
+	callback_func_t func;
+}callbacks[CALLBACK_FUNCS];
+
+s32_t attach_callback_func(s32_t fd, callback_func_t func)
+{
+	if(nr_callbacks >= CALLBACK_FUNCS)
+	{
+		printf("callback attach limited reached!\n");
+		return -1;
+	}
+	
+	callbacks[nr_callbacks].fd = fd;
+	callbacks[nr_callbacks].func = func;
+
+	nr_callbacks++;
+
+	return 0;
+}
 
 int main(int argc, char *argv[])
 {
