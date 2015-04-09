@@ -1,0 +1,2 @@
+obj-$(CONFIG_KAODV) += kaodv.o
+kaodv-objs := kaodv_mod.o kaodv_netlink.o kaodv_queue.o kaodv_ipenc.o kaodv_expl.o 

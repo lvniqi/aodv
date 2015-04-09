@@ -1,3 +1,6 @@
+#include <netinet/in.h>
+#include <sys/time.h>
+
 #include "aodv_rreq.h"
 #include "aodv_socket.h"
 #include "routing_table.h"
@@ -7,8 +10,6 @@
 #include "seek_list.h"
 #include "aodv_rrep.h"
 #include "aodv_timeout.h"
-#include <netinet/in.h>
-#include <sys/time.h>
 
 extern s32_t expanding_ring_search;
 
@@ -85,6 +86,8 @@ void rreq_forward(RREQ *rreq, s32_t len, s32_t ttl)
 void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr ip_dest, s32_t ip_ttl)
 {
 	struct in_addr rreq_dest, rreq_orig;
+	RREP *rrep;
+	s32_t rrep_size = RREP_SIZE;
 	u32_t rreq_id, rreq_new_hopcnt, life;
 	u32_t rreq_orig_seqno, rreq_dest_seqno;
 	rt_table_t *rev_rt, *fwd_rt = NULL;
@@ -104,8 +107,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 
 //	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %d %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), rreq->dest_addr, inet_ntoa(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
 
-	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), inet_ntoa(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
-
+	printf("ip_src= %d.%d.%d.%d, rreq_orig= %d.%d.%d.%d, rreq_dest= %d.%d.%d.%d, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", NIPQUAD(ip_src.s_addr), NIPQUAD(rreq_orig.s_addr), NIPQUAD(rreq_dest.s_addr), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
 
 	if(len < (s32_t)RREQ_SIZE)
 	{
@@ -138,7 +140,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 	life = PATH_DISCOVERY_TIME - 2 * rreq_new_hopcnt * NODE_TRAVERSAL_TIME;
 
 	rev_rt = rt_table_check(rreq_orig);
-
+	
 	if(rev_rt == NULL)
 	{
 		printf("Creating REVERSE route entry, RREQ orig: %s\n", inet_ntoa(rreq_orig));
@@ -165,8 +167,8 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 				seqno_incr(this_host.seqno);
 		}
 
-		//rrep = rrep_create(0, 0, 0, this_host.dev.ipaddr, this_host.seqno, rev_rt->dest_addr, MY_ROUTE_TIMEOUT);
-		//rrep_send(rrep, rev_rt, NULL, RREP_SIZE);
+		rrep = rrep_create(0, 0, 0, this_host.dev.ipaddr, this_host.seqno, rev_rt->dest_addr, MY_ROUTE_TIMEOUT);
+		rrep_send(rrep, rev_rt, NULL, RREP_SIZE);
 	}
 	else
 	{
@@ -180,8 +182,8 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 			if(fwd_rt->dest_seqno != 0 && (s32_t)fwd_rt->dest_seqno >= (s32_t)rreq_dest_seqno)
 			{
 				lifetime = timeval_diff(&fwd_rt->rt_timer.timeout, &now);
-//				rrep = rrep_create(0, 0, fwd_rt->hopcnt, fwd_rt->dest_addr, fwd_rt->dest_seqno, rev_rt->dest_addr, lifetime);
-//				rrep_send(rrep, rev_rt, fwd_rt, rrep_size);
+				rrep = rrep_create(0, 0, fwd_rt->hopcnt, fwd_rt->dest_addr, fwd_rt->dest_seqno, rev_rt->dest_addr, lifetime);
+				rrep_send(rrep, rev_rt, fwd_rt, rrep_size);
 			}
 			else
 			{
@@ -201,8 +203,8 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 
 			if(rreq->g)
 			{
-//				rrep = rrep_create(0, 0, rev_rt->hopcnt, rev_rt->dest_addr, rev_rt->dest_seqno, fwd_rt->dest_addr, lifetime);
-//				rrep_send(rrep, fwd_rt, rev_rt, RREP_SIZE);
+				rrep = rrep_create(0, 0, rev_rt->hopcnt, rev_rt->dest_addr, rev_rt->dest_seqno, fwd_rt->dest_addr, lifetime);
+				rrep_send(rrep, fwd_rt, rev_rt, RREP_SIZE);
 
 				printf("Sending G_RREP to %s with rte to %s\n", inet_ntoa(rreq_dest), inet_ntoa(rreq_orig));
 			}

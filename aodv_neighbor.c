@@ -6,7 +6,7 @@
 #include "parameters.h"
 #include "list.h"
 
-extern s32_t llfeedback;
+//extern s32_t llfeedback;
 
 void neighbor_add(AODV_msg *aodv_msg, struct in_addr src)
 {

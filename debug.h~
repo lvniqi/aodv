@@ -1,0 +1,12 @@
+#ifndef _DEBUG_H_
+#define _DEBUG_H_
+
+#include "defs.h"
+
+#define NIPQUAD(addr) \
+	    ((unsigned char *)&addr)[0], \
+		((unsigned char *)&addr)[1], \
+		((unsigned char *)&addr)[2], \
+		((unsigned char *)&addr)[3]
+
+#endif

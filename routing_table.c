@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "routing_table.h"
 #include "list.h"
 #include "timer_queue.h"
@@ -5,7 +7,7 @@
 #include "parameters.h"
 #include "seek_list.h"
 #include "aodv_neighbor.h"
-#include <memory.h>
+#include "nl.h"
 
 void rt_table_init(void)
 {
@@ -138,7 +140,7 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 	else
 	{
 		rt_tbl.num_active++;
-		//nl_send_add_route_msg(dest, next, hops, lifetime, flags);
+		nl_send_add_route_msg(dest, next, hops, lifetime, flags, this_host.dev.ifindex);
 	}
 ////////////////////////////////////
 //gateway set
@@ -165,13 +167,13 @@ rt_table_t *rt_table_update(rt_table_t *rt, struct in_addr next, u32_t hops, u32
 		if(rt->flags & RT_REPAIR)
 			flags &= ~RT_REPAIR;
 
-		//nl_send_add_route_msg(rt->dest_addr, next, hops, lifetime, flags);
+		nl_send_add_route_msg(rt->dest_addr, next, hops, lifetime, flags, this_host.dev.ifindex);
 	}
 	else if(rt->next_hop.s_addr != 0 && rt->next_hop.s_addr != next.s_addr)
 	{
 		printf("rt->next_hop= %s, new_next_hop= %s\n", inet_ntoa(rt->next_hop), inet_ntoa(next));
 
-		//nl_send_add_route_msg(rt->dest_addr, next, hops, lifetime, flags);
+		nl_send_add_route_msg(rt->dest_addr, next, hops, lifetime, flags, this_host.dev.ifindex);
 	}
 
 	if(hops > 1 && rt->hopcnt == 1)
@@ -291,7 +293,7 @@ s32_t rt_table_invalidate(rt_table_t *rt)//route expiry and deletion
 	rt->last_hello_time.tv_sec = 0;
 	rt->last_hello_time.tv_usec = 0;
 
-	//nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
+	nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
 	
 	//no gateway
 	
@@ -328,7 +330,7 @@ void rt_table_delete(rt_table_t *rt)
 
 	if(rt->state == VALID)
 	{
-		//nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
+		nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
 		rt_tbl.num_active--;
 	}
 

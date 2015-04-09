@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "aodv_hello.h"
 #include "timer_queue.h"
 #include "aodv_timeout.h"
@@ -6,7 +8,6 @@
 #include "routing_table.h"
 #include "aodv_socket.h"
 #include "parameters.h"
-#include <memory.h>
 
 static struct timer hello_timer;
 extern s32_t receive_n_hellos;

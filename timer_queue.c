@@ -1,6 +1,7 @@
+#include <sys/time.h>
+
 #include "timer_queue.h"
 #include "list.h"
-#include <sys/time.h>
 
 list_t tq = {&tq, &tq};
 

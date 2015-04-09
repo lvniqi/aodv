@@ -1,19 +1,20 @@
-#include "defs.h"
-#include "aodv_socket.h"
-#include "parameters.h"
-#include "aodv_rreq.h"
 #include <sys/select.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
+#include "defs.h"
+#include "aodv_socket.h"
+#include "parameters.h"
+#include "aodv_rreq.h"
+#include "nl.h"
 
 s32_t wait_on_reboot = 1;
 s32_t ratelimit = 1;
 s32_t expanding_ring_search = 1;
 s32_t receive_n_hellos = 0;
 s32_t local_repair = 0;
-s32_t qual_threshold = 0;
+//s32_t qual_threshold = 0;
 
 s32_t active_route_timeout = ACTIVE_ROUTE_TIMEOUT_HELLO;
 s32_t ttl_start = TTL_START_HELLO;
@@ -49,7 +50,8 @@ s32_t attach_callback_func(s32_t fd, callback_func_t func)
 
 int main(int argc, char *argv[])
 {
-	fd_set listener;
+	fd_set rfds, readers;
+	s32_t nfds = 0, i;
 	struct timeval tv;
 	s32_t retval;
 	struct in_addr dest;
@@ -59,6 +61,7 @@ int main(int argc, char *argv[])
 	this_host.last_broadcast_time.tv_sec = 0;
 	this_host.last_broadcast_time.tv_usec = 0;
 	this_host.dev.enabled = 1;
+	this_host.dev.ifindex = 9;
 
 #ifdef MT
 	strcpy(this_host.dev.ifname, "br-lan");
@@ -70,6 +73,7 @@ int main(int argc, char *argv[])
 
 	aodv_socket_init();
 	rt_table_init();
+	nl_init();
 
 	printf("Init succeed!\n");
 
@@ -78,18 +82,32 @@ int main(int argc, char *argv[])
 		dest.s_addr = inet_addr(argv[1]);
 		rreq_send(dest, atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
 	}
+	
+	tv.tv_sec = 1;
+	tv.tv_usec = 0;	
+
+	FD_ZERO(&readers);
+
+	for(i = 0; i < nr_callbacks; i++)
+	{
+		FD_SET(callbacks[i].fd, &readers);
+		if(callbacks[i].fd >= nfds)
+			nfds = callbacks[i].fd + 1;
+	}
 
 	while(1)
 	{
-		FD_ZERO(&listener);
-		FD_SET(this_host.dev.sock, &listener);
-
-		tv.tv_sec = tv.tv_usec = 0;	
-		retval = select(this_host.dev.sock + 1, &listener, NULL, NULL, &tv);
+		memcpy((char *)&rfds, (char *)&readers, sizeof(rfds));
+		
+		retval = select(nfds, &rfds, NULL, NULL, &tv);
 		if(retval < 0)
 			printf("Select failed!\n");
-		if(FD_ISSET(this_host.dev.sock, &listener))
-			aodv_socket_read(this_host.dev.sock);
+
+		for(i = 0; i < nr_callbacks; i++)
+		{
+			if(FD_ISSET(callbacks[i].fd, &rfds))
+				(*callbacks[i].func)(callbacks[i].fd);
+		}
 	}
 	return 0;
 }

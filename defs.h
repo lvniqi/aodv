@@ -32,11 +32,18 @@ typedef signed   int  s32_t;
 
 #define max(x, y) ((x) > (y) ? (x):(y))
 
+#define NIPQUAD(addr) \
+	    ((unsigned char *)&addr)[0], \
+		((unsigned char *)&addr)[1], \
+		((unsigned char *)&addr)[2], \
+		((unsigned char *)&addr)[3]
+
 struct dev_info 
 {
 	u8_t enabled;
 	s32_t sock;           //socket associated with this device
 
+	unsigned int ifindex;
 	s8_t ifname[IFNAMESIZE];
 	struct in_addr ipaddr;
 	struct in_addr netmask;

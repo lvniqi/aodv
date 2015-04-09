@@ -1,0 +1,48 @@
+#ifndef _KAODV_H_
+#define _KAODV_H_
+
+#define SKB_TAIL_PTR(skb)			skb_tail_pointer(skb)
+#define SKB_NETWORK_HDR_RAW(skb)	skb_network_header(skb)
+#define SKB_NETWORK_HDR_IPH(skb)	((struct iphdr *)skb_network_header(skb))
+#define SKB_MAC_HDR_RAW(skb)		skb_mac_header(skb)
+#define SKB_SET_NETWORK_HDR(skb, offset)	skb_set_network_header(skb,offset)
+
+#define AODV_PORT 654
+
+static inline char *print_ip(__u32 addr)
+{
+	static char buf[16 * 4];
+	static int index = 0;
+	char *str;
+
+	sprintf(&buf[index], "%d.%d.%d.%d",
+		0x0ff & addr,
+		0x0ff & (addr >> 8),
+		0x0ff & (addr >> 16), 0x0ff & (addr >> 24));
+
+	str = &buf[index];
+	index += 16;
+	index %= 64;
+
+	return str;
+}
+
+static inline char *print_eth(char *addr)
+{
+	static char buf[30];
+
+	sprintf(buf, "%02x:%02x:%02x:%02x:%02x:%02x",
+		(unsigned char)addr[0], (unsigned char)addr[1],
+		(unsigned char)addr[2], (unsigned char)addr[3],
+		(unsigned char)addr[4], (unsigned char)addr[5]);
+
+	return buf;
+}
+
+#define NIPQUAD(addr) \
+	    ((unsigned char *)&addr)[0], \
+	    ((unsigned char *)&addr)[1], \
+	    ((unsigned char *)&addr)[2], \
+	    ((unsigned char *)&addr)[3]
+
+#endif

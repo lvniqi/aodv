@@ -1,0 +1,201 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ACTIVE_ROUTE_TIMEOUT	kaodv_mod.c	26;"	d	file:
+ADDR_HOST	kaodv_mod.c	38;"	d	file:
+AODVGRP_MAX	kaodv_netlink.h	18;"	d
+AODVGRP_NOTIFY	kaodv_netlink.h	/^  AODVGRP_NOTIFY = 1,$/;"	e	enum:__anon1
+AODVGRP_NOTIFY	kaodv_netlink.h	14;"	d
+AODV_BROADCAST	kaodv_mod.c	39;"	d	file:
+AODV_PORT	kaodv.h	10;"	d
+EXPL_MAX_LEN	kaodv_expl.c	13;"	d	file:
+IPPROTO_MIPE	kaodv_ipenc.h	8;"	d
+KAODVM_ADDROUTE	kaodv_netlink.h	/^	KAODVM_ADDROUTE,$/;"	e	enum:__anon2
+KAODVM_ADDROUTE	kaodv_netlink.h	27;"	d
+KAODVM_BASE	kaodv_netlink.h	/^	KAODVM_BASE = 100,$/;"	e	enum:__anon2
+KAODVM_BASE	kaodv_netlink.h	25;"	d
+KAODVM_CONFIG	kaodv_netlink.h	/^	KAODVM_CONFIG,$/;"	e	enum:__anon2
+KAODVM_CONFIG	kaodv_netlink.h	43;"	d
+KAODVM_DEBUG	kaodv_netlink.h	/^	KAODVM_DEBUG,$/;"	e	enum:__anon2
+KAODVM_DEBUG	kaodv_netlink.h	45;"	d
+KAODVM_DELROUTE	kaodv_netlink.h	/^	KAODVM_DELROUTE,$/;"	e	enum:__anon2
+KAODVM_DELROUTE	kaodv_netlink.h	29;"	d
+KAODVM_MAX	kaodv_netlink.h	47;"	d
+KAODVM_NOROUTE_FOUND	kaodv_netlink.h	/^	KAODVM_NOROUTE_FOUND,$/;"	e	enum:__anon2
+KAODVM_NOROUTE_FOUND	kaodv_netlink.h	37;"	d
+KAODVM_REPAIR	kaodv_netlink.h	/^	KAODVM_REPAIR,$/;"	e	enum:__anon2
+KAODVM_REPAIR	kaodv_netlink.h	35;"	d
+KAODVM_ROUTE_REQ	kaodv_netlink.h	/^	KAODVM_ROUTE_REQ,$/;"	e	enum:__anon2
+KAODVM_ROUTE_REQ	kaodv_netlink.h	33;"	d
+KAODVM_ROUTE_UPDATE	kaodv_netlink.h	/^	KAODVM_ROUTE_UPDATE,$/;"	e	enum:__anon2
+KAODVM_ROUTE_UPDATE	kaodv_netlink.h	39;"	d
+KAODVM_SEND_RERR	kaodv_netlink.h	/^	KAODVM_SEND_RERR,$/;"	e	enum:__anon2
+KAODVM_SEND_RERR	kaodv_netlink.h	41;"	d
+KAODVM_TIMEOUT	kaodv_netlink.h	/^	KAODVM_TIMEOUT,$/;"	e	enum:__anon2
+KAODVM_TIMEOUT	kaodv_netlink.h	31;"	d
+KAODV_EXPL_PROC_FS_NAME	kaodv_expl.c	14;"	d	file:
+KAODV_QUEUE_DROP	kaodv_queue.h	4;"	d
+KAODV_QUEUE_PROC_FS_NAME	kaodv_queue.c	23;"	d	file:
+KAODV_QUEUE_QMAX_DEFAULT	kaodv_queue.c	22;"	d	file:
+KAODV_QUEUE_SEND	kaodv_queue.h	5;"	d
+KAODV_RT_GW_ENCAP	kaodv_netlink.h	89;"	d
+KAODV_RT_REPAIR	kaodv_netlink.h	90;"	d
+MAX_INTERFACES	kaodv_mod.c	27;"	d	file:
+NETLINK_AODV	kaodv_netlink.h	10;"	d
+NET_KAODV_QUEUE_QMAX	kaodv_queue.c	24;"	d	file:
+NET_KAODV_QUEUE_QMAX_NAME	kaodv_queue.c	25;"	d	file:
+PKT_INBOUND	kaodv_netlink.h	93;"	d
+PKT_OUTBOUND	kaodv_netlink.h	94;"	d
+RCV_SKB_FAIL	kaodv_netlink.c	231;"	d	file:
+SKB_MAC_HDR_RAW	kaodv.h	7;"	d
+SKB_NETWORK_HDR_IPH	kaodv.h	6;"	d
+SKB_NETWORK_HDR_RAW	kaodv.h	5;"	d
+SKB_SET_NETWORK_HDR	kaodv.h	8;"	d
+SKB_TAIL_PTR	kaodv.h	4;"	d
+_KAODV_EXPL_H_	kaodv_expl.h	2;"	d
+_KAODV_H_	kaodv.h	2;"	d
+_KAODV_IPENC_H_	kaodv_ipenc.h	2;"	d
+_KAODV_MOD_H_	kaodv_mod.h	2;"	d
+_KAODV_NETLINK_H_	kaodv_netlink.h	2;"	d
+_KAODV_QUEUE_H_	kaodv_queue.h	2;"	d
+__AODVGRP_MAX	kaodv_netlink.h	/^  __AODVGRP_MAX$/;"	e	enum:__anon1
+__KAODV_MAX	kaodv_netlink.h	/^	__KAODV_MAX,$/;"	e	enum:__anon2
+__kaodv_expl_add	kaodv_expl.c	/^static inline int __kaodv_expl_add(struct expl_entry *e)$/;"	f	file:
+__kaodv_expl_check	kaodv_expl.c	/^static inline struct expl_entry *__kaodv_expl_check(__u32 daddr)$/;"	f	file:
+__kaodv_expl_del	kaodv_expl.c	/^static inline int __kaodv_expl_del(struct expl_entry *e)$/;"	f	file:
+__kaodv_expl_flush	kaodv_expl.c	/^static inline void __kaodv_expl_flush(void)$/;"	f	file:
+__kaodv_expl_set_next_timeout	kaodv_expl.c	/^static inline void __kaodv_expl_set_next_timeout(void)$/;"	f	file:
+__kaodv_queue_check_delqueue_entry	kaodv_queue.c	/^static inline struct kaodv_queue_entry * __kaodv_queue_check_delqueue_entry(kaodv_queue_cmpfn cmpfn, unsigned long data)\/\/find and delete from the queue$/;"	f	file:
+__kaodv_queue_check_entry	kaodv_queue.c	/^static inline struct kaodv_queue_entry * __kaodv_queue_check_entry(kaodv_queue_cmpfn cmpfn, unsigned long data)$/;"	f	file:
+__kaodv_queue_enqueue_entry	kaodv_queue.c	/^static inline int __kaodv_queue_enqueue_entry(struct kaodv_queue_entry *entry)$/;"	f	file:
+__kaodv_queue_flush	kaodv_queue.c	/^static inline void __kaodv_queue_flush(void)$/;"	f	file:
+__kaodv_queue_reset	kaodv_queue.c	/^static inline void __kaodv_queue_reset(void)$/;"	f	file:
+active_route_timeout	kaodv_mod.c	/^int active_route_timeout = 3000;$/;"	v
+active_route_timeout	kaodv_netlink.h	/^	int active_route_timeout;$/;"	m	struct:kaodv_conf_msg
+bc_addr	kaodv_mod.h	/^	struct in_addr bc_addr;$/;"	m	struct:if_info	typeref:struct:if_info::in_addr
+check	kaodv_ipenc.h	/^	u_int16_t check;$/;"	m	struct:min_ipenc_hdr
+daddr	kaodv_expl.h	/^	__u32 daddr;$/;"	m	struct:expl_entry
+daddr	kaodv_ipenc.h	/^	u_int32_t daddr;$/;"	m	struct:min_ipenc_hdr
+daddr	kaodv_queue.c	/^	__u32 daddr;$/;"	m	struct:kaodv_rt_info	file:
+dest	kaodv_netlink.h	/^	u_int32_t dest;$/;"	m	struct:kaodv_rt_msg
+dest_cmp	kaodv_queue.c	/^static inline int dest_cmp(struct kaodv_queue_entry *e, unsigned long daddr)$/;"	f	file:
+dev	kaodv_mod.h	/^	struct net_device *dev;$/;"	m	struct:if_info	typeref:struct:if_info::net_device
+expires	kaodv_expl.h	/^	unsigned long expires;$/;"	m	struct:expl_entry
+expl_entry	kaodv_expl.h	/^struct expl_entry$/;"	s
+expl_len	kaodv_expl.c	/^static unsigned int expl_len;$/;"	v	file:
+expl_lock	kaodv_expl.c	/^static rwlock_t expl_lock;\/\/ = RW_LOCK_UNLOCKED;\/\/linux 3.18 don`t have$/;"	v	file:
+expl_proc	kaodv_expl.c	/^struct proc_dir_entry *expl_proc;$/;"	v	typeref:struct:proc_dir_entry
+expl_proc_open	kaodv_expl.c	/^static int expl_proc_open(struct inode *inode, struct file *file)$/;"	f	file:
+expl_proc_ops	kaodv_expl.c	/^static struct file_operations expl_proc_ops = $/;"	v	typeref:struct:file_operations	file:
+expl_seq_next	kaodv_expl.c	/^static void *expl_seq_next(struct seq_file *s, void *v, loff_t *pos)$/;"	f	file:
+expl_seq_ops	kaodv_expl.c	/^static struct seq_operations expl_seq_ops = $/;"	v	typeref:struct:seq_operations	file:
+expl_seq_show	kaodv_expl.c	/^static int expl_seq_show(struct seq_file *s, void *v)$/;"	f	file:
+expl_seq_start	kaodv_expl.c	/^static void *expl_seq_start(struct seq_file *s, loff_t *pos)$/;"	f	file:
+expl_seq_stop	kaodv_expl.c	/^static void expl_seq_stop(struct seq_file *s, void *v)$/;"	f	file:
+expl_timer	kaodv_expl.c	/^static struct timer_list expl_timer;$/;"	v	typeref:struct:timer_list	file:
+flags	kaodv_expl.h	/^	unsigned short flags;$/;"	m	struct:expl_entry
+flags	kaodv_netlink.h	/^	u_int8_t flags;$/;"	m	struct:kaodv_rt_msg
+if_addr	kaodv_mod.h	/^	struct in_addr if_addr;$/;"	m	struct:if_info	typeref:struct:if_info::in_addr
+if_info	kaodv_mod.h	/^struct if_info$/;"	s
+if_info_add	kaodv_mod.h	/^static inline int if_info_add(struct net_device *dev)$/;"	f
+if_info_from_ifindex	kaodv_mod.h	/^static inline int if_info_from_ifindex(struct in_addr *ifa, struct in_addr *bc, int ifindex)$/;"	f
+if_info_purge	kaodv_mod.h	/^static inline void if_info_purge(void)$/;"	f
+ifilock	kaodv_mod.h	/^static rwlock_t ifilock;\/\/ = RW_LOCK_UNLOCKED;\/\/kernel 3.18 don`t have$/;"	v
+ifindex	kaodv_expl.h	/^	int ifindex;$/;"	m	struct:expl_entry
+ifindex	kaodv_netlink.h	/^	int ifindex;$/;"	m	struct:kaodv_rt_msg
+ifname	kaodv_mod.c	/^static char *ifname[MAX_INTERFACES] = {"eth0"};$/;"	v	file:
+ifname	kaodv_mod.c	/^static char *ifname[MAX_INTERFACES] = {"ra0"};$/;"	v	file:
+ip_csum	kaodv_ipenc.c	/^static u_int16_t ip_csum(unsigned short *buf, int nshorts)$/;"	f	file:
+ip_pkt_decapsulate	kaodv_ipenc.c	/^struct sk_buff *ip_pkt_decapsulate(struct sk_buff *skb)$/;"	f
+ip_pkt_encapsulate	kaodv_ipenc.c	/^struct sk_buff *ip_pkt_encapsulate(struct sk_buff *skb, __u32 dest)$/;"	f
+kaodv-objs	Makefile	/^kaodv-objs := kaodv_mod.o kaodv_netlink.o kaodv_queue.o kaodv_ipenc.o kaodv_expl.o$/;"	m
+kaodv_conf_msg	kaodv_netlink.h	/^typedef struct kaodv_conf_msg {$/;"	s
+kaodv_conf_msg_t	kaodv_netlink.h	/^} kaodv_conf_msg_t;$/;"	t	typeref:struct:kaodv_conf_msg
+kaodv_exit	kaodv_mod.c	/^module_exit(kaodv_exit);$/;"	v
+kaodv_exit	kaodv_mod.c	/^static void __exit kaodv_exit(void)$/;"	f	file:
+kaodv_expl_add	kaodv_expl.c	/^int kaodv_expl_add(__u32 daddr, __u32 nhop, unsigned long time, unsigned short flags, int ifindex)$/;"	f
+kaodv_expl_del	kaodv_expl.c	/^int kaodv_expl_del(__u32 daddr)$/;"	f
+kaodv_expl_finish	kaodv_expl.c	/^void kaodv_expl_finish(void)$/;"	f
+kaodv_expl_flush	kaodv_expl.c	/^void kaodv_expl_flush(void)$/;"	f
+kaodv_expl_get	kaodv_expl.c	/^int kaodv_expl_get(__u32 daddr, struct expl_entry *e_in)$/;"	f
+kaodv_expl_init	kaodv_expl.c	/^void kaodv_expl_init(void)$/;"	f
+kaodv_expl_timeout	kaodv_expl.c	/^static void kaodv_expl_timeout(unsigned long data)$/;"	f	file:
+kaodv_expl_update	kaodv_expl.c	/^int kaodv_expl_update(__u32 daddr, __u32 nhop, unsigned long time, unsigned short flags, int ifindex)$/;"	f
+kaodv_hook	kaodv_mod.c	/^static unsigned int kaodv_hook(unsigned int hooknum, struct sk_buff *skb, const struct net_device *in, const struct net_device *out, int (*okfn)(struct sk_buff *))$/;"	f	file:
+kaodv_init	kaodv_mod.c	/^module_init(kaodv_init);$/;"	v
+kaodv_init	kaodv_mod.c	/^static int __init kaodv_init(void)$/;"	f	file:
+kaodv_msg_type_to_str	kaodv_netlink.h	/^static inline char *kaodv_msg_type_to_str(int type)$/;"	f
+kaodv_netlink_build_msg	kaodv_netlink.c	/^static struct sk_buff * kaodv_netlink_build_msg(int type, void *data, int len)$/;"	f	file:
+kaodv_netlink_finish	kaodv_netlink.c	/^void kaodv_netlink_finish(void)$/;"	f
+kaodv_netlink_init	kaodv_netlink.c	/^int kaodv_netlink_init(void)$/;"	f
+kaodv_netlink_rcv_nl_event	kaodv_netlink.c	/^static int kaodv_netlink_rcv_nl_event(struct notifier_block *this, unsigned long event, void *ptr)$/;"	f	file:
+kaodv_netlink_rcv_skb	kaodv_netlink.c	/^static inline void kaodv_netlink_rcv_skb(struct sk_buff *skb)$/;"	f	file:
+kaodv_netlink_receive_peer	kaodv_netlink.c	/^static int kaodv_netlink_receive_peer(unsigned char type, void *msg, unsigned int len)$/;"	f	file:
+kaodv_netlink_send_debug_msg	kaodv_netlink.c	/^void kaodv_netlink_send_debug_msg(char *buf, int len)$/;"	f
+kaodv_netlink_send_rerr_msg	kaodv_netlink.c	/^void kaodv_netlink_send_rerr_msg(int type, __u32 src, __u32 dest, int ifindex)$/;"	f
+kaodv_netlink_send_rt_msg	kaodv_netlink.c	/^void kaodv_netlink_send_rt_msg(int type, __u32 src, __u32 dest)$/;"	f
+kaodv_netlink_send_rt_update_msg	kaodv_netlink.c	/^void kaodv_netlink_send_rt_update_msg(int type, __u32 src, __u32 dest, int ifindex)$/;"	f
+kaodv_nl_notifier	kaodv_netlink.c	/^static struct notifier_block kaodv_nl_notifier = $/;"	v	typeref:struct:notifier_block	file:
+kaodv_ops	kaodv_mod.c	/^static struct nf_hook_ops kaodv_ops[] = $/;"	v	typeref:struct:nf_hook_ops	file:
+kaodv_queue_check	kaodv_queue.c	/^int kaodv_queue_check(__u32 daddr)$/;"	f
+kaodv_queue_check_delqueue_entry	kaodv_queue.c	/^static struct kaodv_queue_entry * kaodv_queue_check_delqueue_entry(kaodv_queue_cmpfn cmpfn, unsigned long data)$/;"	f	file:
+kaodv_queue_cmpfn	kaodv_queue.c	/^typedef int (*kaodv_queue_cmpfn)(struct kaodv_queue_entry *, unsigned long);$/;"	t	file:
+kaodv_queue_enqueue_packet	kaodv_queue.c	/^int kaodv_queue_enqueue_packet(struct sk_buff *skb, int (*okfn)(struct sk_buff *))$/;"	f
+kaodv_queue_entry	kaodv_queue.c	/^struct kaodv_queue_entry$/;"	s	file:
+kaodv_queue_finish	kaodv_queue.c	/^void kaodv_queue_finish(void)$/;"	f
+kaodv_queue_flush	kaodv_queue.c	/^void kaodv_queue_flush(void)$/;"	f
+kaodv_queue_init	kaodv_queue.c	/^int kaodv_queue_init(void)$/;"	f
+kaodv_queue_set_verdict	kaodv_queue.c	/^int kaodv_queue_set_verdict(int verdict, __u32 daddr)$/;"	f
+kaodv_rt_info	kaodv_queue.c	/^struct kaodv_rt_info$/;"	s	file:
+kaodv_rt_msg	kaodv_netlink.h	/^typedef struct kaodv_rt_msg { $/;"	s
+kaodv_rt_msg_t	kaodv_netlink.h	/^} kaodv_rt_msg_t;$/;"	t	typeref:struct:kaodv_rt_msg
+kaodv_update_route_timeouts	kaodv_mod.c	/^void kaodv_update_route_timeouts(int hooknum, const struct net_device *dev, struct iphdr *iph)$/;"	f
+kaodvnl	kaodv_netlink.c	/^static struct sock *kaodvnl;$/;"	v	typeref:struct:sock	file:
+l	kaodv_expl.h	/^	struct list_head l;$/;"	m	struct:expl_entry	typeref:struct:expl_entry::list_head
+l	kaodv_mod.h	/^	struct list_head l;$/;"	m	struct:if_info	typeref:struct:if_info::list_head
+list	kaodv_queue.c	/^	struct list_head list;$/;"	m	struct:kaodv_queue_entry	typeref:struct:kaodv_queue_entry::list_head	file:
+list_is_first	kaodv_expl.c	20;"	d	file:
+maxlen	kaodv_queue.c	/^	unsigned int maxlen;$/;"	m	struct:queue_show	file:
+min_ipenc_hdr	kaodv_ipenc.h	/^struct min_ipenc_hdr$/;"	s
+name	kaodv_netlink.h	/^	char *name;	       $/;"	m	struct:__anon3
+nhop	kaodv_expl.h	/^	__u32 nhop;$/;"	m	struct:expl_entry
+nhop	kaodv_netlink.h	/^	u_int32_t nhop;$/;"	m	struct:kaodv_rt_msg
+num_parms	kaodv_mod.c	/^static int num_parms = 0;$/;"	v	file:
+okfn	kaodv_queue.c	/^	int (*okfn)(struct sk_buff *);$/;"	m	struct:kaodv_queue_entry	file:
+peer_pid	kaodv_netlink.c	/^static int peer_pid;$/;"	v	file:
+pkts_dropped	kaodv_mod.c	/^static unsigned long pkts_dropped = 0;$/;"	v	file:
+print_eth	kaodv.h	/^static inline char *print_eth(char *addr)$/;"	f
+print_ip	kaodv.h	/^static inline char *print_ip(__u32 addr)$/;"	f
+protocol	kaodv_ipenc.h	/^	u_int8_t protocol;$/;"	m	struct:min_ipenc_hdr
+qual	kaodv_mod.c	/^static int qual = 0;$/;"	v	file:
+qual_th	kaodv_mod.c	/^int qual_th = 0;$/;"	v
+qual_th	kaodv_netlink.h	/^	int qual_th;$/;"	m	struct:kaodv_conf_msg
+queue_lock	kaodv_queue.c	/^static rwlock_t queue_lock;\/\/ = RW_LOCK_UNLOCKED;\/\/linux 3.18 don`t have$/;"	v	file:
+queue_maxlen	kaodv_queue.c	/^static unsigned int queue_maxlen = KAODV_QUEUE_QMAX_DEFAULT;$/;"	v	file:
+queue_proc	kaodv_queue.c	/^struct proc_dir_entry *queue_proc;$/;"	v	typeref:struct:proc_dir_entry
+queue_proc_open	kaodv_queue.c	/^static int queue_proc_open(struct inode *inode, struct file *file)$/;"	f	file:
+queue_proc_ops	kaodv_queue.c	/^static struct file_operations queue_proc_ops = $/;"	v	typeref:struct:file_operations	file:
+queue_seq_next	kaodv_queue.c	/^static void *queue_seq_next(struct seq_file *s, void *v, loff_t *pos)$/;"	f	file:
+queue_seq_ops	kaodv_queue.c	/^static struct seq_operations queue_seq_ops = $/;"	v	typeref:struct:seq_operations	file:
+queue_seq_show	kaodv_queue.c	/^static int queue_seq_show(struct seq_file *s, void *v)$/;"	f	file:
+queue_seq_start	kaodv_queue.c	/^static void *queue_seq_start(struct seq_file *s, loff_t *pos)$/;"	f	file:
+queue_seq_stop	kaodv_queue.c	/^static void queue_seq_stop(struct seq_file *s, void *v)$/;"	f	file:
+queue_show	kaodv_queue.c	/^struct queue_show$/;"	s	file:
+queue_show_buf	kaodv_queue.c	/^static struct queue_show queue_show_buf[1];\/\/for proc seq output$/;"	v	typeref:struct:queue_show	file:
+queue_show_buf_update	kaodv_queue.c	/^static void queue_show_buf_update(void)$/;"	f	file:
+queue_total	kaodv_queue.c	/^static unsigned int queue_total;$/;"	v	file:
+res	kaodv_ipenc.h	/^	u_int8_t res:7;$/;"	m	struct:min_ipenc_hdr
+rt_info	kaodv_queue.c	/^	struct kaodv_rt_info rt_info;$/;"	m	struct:kaodv_queue_entry	typeref:struct:kaodv_queue_entry::kaodv_rt_info	file:
+s	kaodv_ipenc.h	/^	u_int8_t s:1;$/;"	m	struct:min_ipenc_hdr
+saddr	kaodv_queue.c	/^	__u32 saddr;$/;"	m	struct:kaodv_rt_info	file:
+skb	kaodv_queue.c	/^	struct sk_buff *skb;$/;"	m	struct:kaodv_queue_entry	typeref:struct:kaodv_queue_entry::sk_buff	file:
+src	kaodv_netlink.h	/^	u_int32_t src;$/;"	m	struct:kaodv_rt_msg
+time	kaodv_netlink.h	/^	long time;$/;"	m	struct:kaodv_rt_msg
+tos	kaodv_queue.c	/^	__u8 tos;\/\/type of service$/;"	m	struct:kaodv_rt_info	file:
+total	kaodv_queue.c	/^	unsigned int total;$/;"	m	struct:queue_show	file:
+type	kaodv_netlink.h	/^	int type;$/;"	m	struct:__anon3
+type	kaodv_netlink.h	/^	u_int8_t type;$/;"	m	struct:kaodv_rt_msg
+typenames	kaodv_netlink.h	/^} typenames[KAODVM_MAX] = { $/;"	v	typeref:struct:__anon3

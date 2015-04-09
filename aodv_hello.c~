@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "aodv_hello.h"
 #include "timer_queue.h"
 #include "aodv_timeout.h"
@@ -6,7 +8,6 @@
 #include "routing_table.h"
 #include "aodv_socket.h"
 #include "parameters.h"
-#include <memory.h>
 
 static struct timer hello_timer;
 extern s32_t receive_n_hellos;
@@ -97,11 +98,11 @@ void hello_process(RREP *hello, s32_t len)
 
 		if(flags & RT_UNIDIR)
 		{
-			printf("%s new NEIGHBOR, link UNI_DIR\n", inet_ntoa(rt->dest_addr));
+			printf("%s new NEIGHBOR, link UNI_DIR\n", NIPQUAD(rt->dest_addr.s_addr));
 		}
 		else
 		{
-			printf("%s new NEIGHBOR!\n", inet_ntoa(rt->dest_addr));
+			printf("%s new NEIGHBOR!\n", NIPQUAD(rt->dest_addr.s_addr));
 		}
 
 		rt->hello_cnt = 1;

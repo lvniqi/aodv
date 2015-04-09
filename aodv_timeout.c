@@ -10,6 +10,7 @@
 #include "aodv_rrep.h"
 #include "aodv_socket.h"
 #include "timer_queue.h"
+#include "nl.h"
 
 extern s32_t expanding_ring_search, local_repair, delete_period;
 
@@ -75,7 +76,7 @@ void route_discovery_timeout(void *arg)
 	{
 		printf("No route found!\n");
 
-		//nl_send_no_route_found_msg(entry->dest_addr);
+		nl_send_no_route_found_msg(entry->dest_addr);
 		
 		repair_rt = rt_table_check(entry->dest_addr);
 
@@ -104,7 +105,7 @@ void local_repair_timeout(void *arg)
 
 	rt->flags &= ~RT_REPAIR;
 
-	//nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
+	nl_send_del_route_msg(rt->dest_addr, rt->next_hop, rt->hopcnt);
 	
 
 	if(rt->nprecursor)//if we have precursor //Write myself

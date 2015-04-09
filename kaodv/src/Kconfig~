@@ -1,0 +1,6 @@
+config NETFILTER-ADHOC
+　　tristate "my netfilter-adhoc"
+　　default n
+　　help
+　　　This is a example, for debugging kernel model.
+　　　If unsure, say N.

@@ -1,0 +1,6 @@
+config KAODV
+　　tristate "my aodv"
+　　default n
+　　help
+　　　This is a example, for aodv kernel mod.
+　　　If unsure, say N.

@@ -98,20 +98,20 @@ typedef struct kaodv_rt_msg {
 typedef struct kaodv_conf_msg {
 	int active_route_timeout;
 	int qual_th;
-	int is_gateway;
+	//int is_gateway;
 } kaodv_conf_msg_t;
 
 /* Stuff below is not exported to user space */
 #ifdef __KERNEL__
 
-/*int kaodv_netlink_init(void);
-void kaodv_netlink_fini(void);
+int kaodv_netlink_init(void);
+void kaodv_netlink_finish(void);
 
 void kaodv_netlink_send_rt_msg(int type, __u32 src, __u32 dest);
 void kaodv_netlink_send_rt_update_msg(int type, __u32 src,
 				      __u32 dest, int ifindex);
 void kaodv_netlink_send_rerr_msg(int type, __u32 src, __u32 dest, int ifindex);
-void kaodv_netlink_send_debug_msg(char *buf, int len);*/
+void kaodv_netlink_send_debug_msg(char *buf, int len);
 
 #endif				/* __KERNEL__ */
 

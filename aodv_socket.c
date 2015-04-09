@@ -1,3 +1,10 @@
+#include <string.h>
+#include <sys/time.h>
+#include <sys/socket.h>
+#include <net/if.h>
+#include <netinet/udp.h>
+#include <sys/uio.h>
+
 #include "aodv_socket.h"
 #include "aodv_rreq.h"
 #include "timer_queue.h"
@@ -7,12 +14,6 @@
 #include "aodv_hello.h"
 #include "aodv_neighbor.h"
 #include "aodv_timeout.h"
-#include <memory.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <net/if.h>
-#include <netinet/udp.h>
-#include <sys/uio.h>
 
 #define SOCK_RECVBUF_SIZE 256*1024
 

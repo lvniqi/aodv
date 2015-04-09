@@ -37,6 +37,7 @@ struct dev_info
 	u8_t enabled;
 	s32_t sock;           //socket associated with this device
 
+	unsigned int ifindex;
 	s8_t ifname[IFNAMESIZE];
 	struct in_addr ipaddr;
 	struct in_addr netmask;
@@ -58,5 +59,8 @@ typedef struct
 {
 	u8_t type;
 }AODV_msg;
+
+typedef void (*callback_func_t)(s32_t);
+extern s32_t attach_callback_func(s32_t fd, callback_func_t func);
 
 #endif

@@ -1,12 +1,3 @@
-#include "nl.h"
-#include "kaodv/kaodv_netlink.h"
-#include "aodv_rreq.h"
-#include "aodv_timeout.h"
-#include "routing_table.h"
-#include "aodv_hello.h"
-#include "parameters.h"
-#include "aodv_socket.h"
-#include "aodv_rerr.h"
 #include <string.h>
 #include <asm/types.h>
 #include <sys/time.h>
@@ -14,6 +5,16 @@
 #include <linux/netlink.h>
 #include <sys/select.h>
 #include <linux/rtnetlink.h>
+
+#include "nl.h"
+#include "kaodv/src/kaodv_netlink.h"
+#include "aodv_rreq.h"
+#include "aodv_timeout.h"
+#include "routing_table.h"
+#include "aodv_hello.h"
+#include "parameters.h"
+#include "aodv_socket.h"
+#include "aodv_rerr.h"
 
 struct nlsock
 {
@@ -30,7 +31,8 @@ struct nlsock rtnl;
 static void nl_kaodv_callback(s32_t sock);
 static void nl_rt_callback(s32_t sock);
 
-extern s32_t llfeedback, active_route_timeout, qual_threshold, wait_on_reboot;
+//extern s32_t llfeedback, active_route_timeout, qual_threshold, wait_on_reboot;
+extern s32_t active_route_timeout, wait_on_reboot;
 
 extern struct timer worb_timer;
 
@@ -133,7 +135,7 @@ static void nl_kaodv_callback(s32_t sock)
 	struct in_addr dest_addr, src_addr;
 	kaodv_rt_msg_t *m;
 	rt_table_t *rt, *fwd_rt, *rev_rt = NULL;
-
+	
 	addrlen = sizeof(struct sockaddr_nl);
 
 	len = recvfrom(sock, buf, BUFLEN, 0, (struct sockaddr *)&peer, &addrlen);
@@ -158,9 +160,11 @@ static void nl_kaodv_callback(s32_t sock)
 				printf("NLMSG_ERROR, error= %d, type= %s\n", nlmerr->error, kaodv_msg_type_to_str(nlmerr->msg.nlmsg_type));
 			}
 			break;
+
 		case KAODVM_DEBUG:
 			printf("kaodv: %s\n", (s8_t *)NLMSG_DATA(nlm));
 			break;
+
 		case KAODVM_TIMEOUT:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
@@ -178,6 +182,7 @@ static void nl_kaodv_callback(s32_t sock)
 				printf("Got rt timeout msg but there is no route\n");
 			}
 			break;
+
 		case KAODVM_ROUTE_REQ:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
@@ -186,6 +191,7 @@ static void nl_kaodv_callback(s32_t sock)
 
 			rreq_route_discovery(dest_addr, 0);
 			break;
+
 		case KAODVM_REPAIR:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
@@ -200,12 +206,15 @@ static void nl_kaodv_callback(s32_t sock)
 				rreq_local_repair(fwd_rt, src_addr);
 			}
 			break;
+
 		case KAODVM_ROUTE_UPDATE:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
 			src_addr.s_addr = m->src;
 
-			printf("Got ROUTE_UPDATE from kernel, S= %s, D= %s\n", inet_ntoa(src_addr), inet_ntoa(dest_addr));
+			//printf("Got ROUTE_UPDATE from kernel, S= %s, D= %s\n", inet_ntoa(src_addr), inet_ntoa(dest_addr));
+			printf("Got ROUTE_UPDATE from kernel, S= %d.%d.%d.%d, D= %d.%d.%d.%d\n", NIPQUAD(src_addr.s_addr), NIPQUAD(dest_addr.s_addr));
+
 
 			if(dest_addr.s_addr == AODV_BROADCAST || dest_addr.s_addr == this_host.dev.broadcast.s_addr)
 				return;
@@ -215,6 +224,7 @@ static void nl_kaodv_callback(s32_t sock)
 
 			rt_table_update_route_timeouts(fwd_rt, rev_rt);
 			break;
+
 		case KAODVM_SEND_RERR:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
@@ -554,7 +564,7 @@ s32_t nl_send_conf_msg(void)
 	areq.n.nlmsg_type = KAODVM_CONFIG;
 	areq.n.nlmsg_flags = NLM_F_REQUEST;
 
-	areq.cm.qual_th = qual_threshold;
+	//areq.cm.qual_th = qual_threshold;
 	areq.cm.active_route_timeout = active_route_timeout;
 	
 	return nl_send(&aodvnl, &areq.n);
