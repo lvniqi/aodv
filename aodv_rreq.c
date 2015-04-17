@@ -10,6 +10,7 @@
 #include "seek_list.h"
 #include "aodv_rrep.h"
 #include "aodv_timeout.h"
+#include "debug.h"
 
 extern s32_t expanding_ring_search;
 
@@ -64,7 +65,7 @@ void rreq_send(struct in_addr dest_addr, u32_t dest_seqno, s32_t ttl, u8_t flags
 		aodv_socket_send((AODV_msg *)rreq, dest, RREQ_SIZE, ttl, &this_host.dev); 
 	} 
 	else
-		printf("The device is not activited!\n");	
+		DEBUG(LOG_DEBUG, 0, "The device is not activited!");	
 }
 
 void rreq_forward(RREQ *rreq, s32_t len, s32_t ttl)
@@ -74,7 +75,7 @@ void rreq_forward(RREQ *rreq, s32_t len, s32_t ttl)
 	dest.s_addr = AODV_BROADCAST;
 	orig.s_addr = rreq->orig_addr;
 
-	printf("forwarding RREQ src= %s, rreq_id= %d\n", inet_ntoa(orig), ntohl(rreq->rreq_id));	
+	DEBUG(LOG_INFO, 0, "forwarding RREQ src= %s, rreq_id= %d", ip_to_str(orig), ntohl(rreq->rreq_id));	
 
 	rreq = (RREQ *)aodv_socket_queue_msg((AODV_msg *)rreq, len);
 
@@ -101,29 +102,27 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 
 	if(rreq_orig.s_addr == this_host.dev.ipaddr.s_addr)
 	{
-		printf("The RREQ was sended by us!\n");
+		DEBUG(LOG_DEBUG, 0, "The RREQ was sended by us");
 		return;
 	}
 
-//	printf("ip_src= %s, rreq_orig= %s, rreq_dest= %d %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", inet_ntoa(ip_src), inet_ntoa(rreq_orig), rreq->dest_addr, inet_ntoa(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
-
-	printf("ip_src= %d.%d.%d.%d, rreq_orig= %d.%d.%d.%d, rreq_dest= %d.%d.%d.%d, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d\n", NIPQUAD(ip_src.s_addr), NIPQUAD(rreq_orig.s_addr), NIPQUAD(rreq_dest.s_addr), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
+//	DEBUG(LOG_DEBUG, 0, "ip_src= %s, rreq_orig= %s, rreq_dest= %s, rreq_id= %d, ttl= %d, dest_seqno= %d, orig_seqno= %d", ip_to_str(ip_src), ip_to_str(rreq_orig), ip_to_str(rreq_dest), rreq_id, ip_ttl, rreq_dest_seqno, rreq_orig_seqno);
 
 	if(len < (s32_t)RREQ_SIZE)
 	{
-		printf("IP data too short, from %s to %s\n", inet_ntoa(ip_src), inet_ntoa(ip_dest));
+		alog(LOG_WARNING, 0, __FUNCTION__, "IP data too short, from %s to %s", ip_to_str(ip_src), ip_to_str(ip_dest));
 		return;
 	}
 
 	if(rreq_blacklist_check(ip_src))
 	{
-		printf("prev hop of RREQ is in the blacklist, ignoring!\n");
+		DEBUG(LOG_DEBUG, 0, "prev hop of RREQ is in the blacklist, ignoring!");
 		return;
 	}
 
 	if(rreq_record_check(rreq_orig, rreq_id))
 	{
-		printf("We have a visiter which we just sended him out!\n ");
+		DEBUG(LOG_DEBUG, 0, "Receive RREQ buffered already!");
 		return;
 	}
 
@@ -143,7 +142,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 	
 	if(rev_rt == NULL)
 	{
-		printf("Creating REVERSE route entry, RREQ orig: %s\n", inet_ntoa(rreq_orig));
+		DEBUG(LOG_DEBUG, 0, "Creating REVERSE route entry, RREQ orig: %s", ip_to_str(rreq_orig));
 		rev_rt = rt_table_insert(rreq_orig, ip_src, rreq_new_hopcnt, rreq_orig_seqno, life, VALID, 0);
 	}	
 	else
@@ -187,18 +186,7 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 			}
 			else
 			{
-				if(ip_ttl > 1)
-				{
-					if(fwd_rt && !(fwd_rt->flags & RT_INET_DEST) && (s32_t)fwd_rt->dest_seqno > (s32_t)rreq_dest_seqno)
-					rreq->dest_seqno = htonl(fwd_rt->dest_seqno);
-
-					rreq_forward(rreq, len, --ip_ttl);
-				}
-				else
-				{
-					printf("RREQ not forwarded!\n");
-				}
-				return;
+				goto forward;
 			}
 
 			if(rreq->g)
@@ -206,8 +194,23 @@ void rreq_process(RREQ *rreq, s32_t len, struct in_addr ip_src, struct in_addr i
 				rrep = rrep_create(0, 0, rev_rt->hopcnt, rev_rt->dest_addr, rev_rt->dest_seqno, fwd_rt->dest_addr, lifetime);
 				rrep_send(rrep, fwd_rt, rev_rt, RREP_SIZE);
 
-				printf("Sending G_RREP to %s with rte to %s\n", inet_ntoa(rreq_dest), inet_ntoa(rreq_orig));
+				DEBUG(LOG_DEBUG, 0, "Sending G_RREP to %s with rte to %s", ip_to_str(rreq_dest), ip_to_str(rreq_orig));
 			}
+
+			return;
+		}
+
+forward:
+		if(ip_ttl > 1)
+		{
+			if(fwd_rt && !(fwd_rt->flags & RT_INET_DEST) && (s32_t)fwd_rt->dest_seqno > (s32_t)rreq_dest_seqno)
+			rreq->dest_seqno = htonl(fwd_rt->dest_seqno);
+
+			rreq_forward(rreq, len, --ip_ttl);
+		}
+		else
+		{
+			DEBUG(LOG_WARNING, 0, "RREQ not forwarded");
 		}
 	}
 }
@@ -220,13 +223,13 @@ struct rreq_record *rreq_record_insert(struct in_addr orig_addr, u32_t rreq_id)
 
 	if(rec)
 	{
-		printf("RREQ record already exsited!\n");
+		DEBUG(LOG_DEBUG, 0, "RREQ record already exsited");
 		return rec;
 	}
 
 	if((rec = (struct rreq_record *)malloc(sizeof(struct rreq_record))) == NULL)
 	{
-		printf("RREQ record insert malloc failed!\n");
+		DEBUG(LOG_WARNING, 0, "RREQ record insert malloc failed");
 		perror("");
 		exit(-1);
 	}
@@ -238,7 +241,7 @@ struct rreq_record *rreq_record_insert(struct in_addr orig_addr, u32_t rreq_id)
 
 	list_push_front(&rreq_records, &rec->l);
 
-	printf("Buffering RREQ %s rreq_id= %d time= %u\n", inet_ntoa(orig_addr), rreq_id, PATH_DISCOVERY_TIME);
+	DEBUG(LOG_DEBUG, 0, "Buffering RREQ %s rreq_id= %d time= %u", ip_to_str(orig_addr), rreq_id, PATH_DISCOVERY_TIME);
 
 	timer_set_timeout(&rec->rec_timer, PATH_DISCOVERY_TIME);
 
@@ -268,13 +271,13 @@ struct rreq_blacklist *rreq_blacklist_insert(struct in_addr dest_addr)
 
 	if(bl)
 	{
-		printf("Blacklist record already exsited!\n");
+		DEBUG(LOG_DEBUG, 0, "Blacklist record already exsited");
 		return bl;
 	}
 
 	if((bl = (struct rreq_blacklist *)malloc(sizeof(struct rreq_blacklist))) == NULL)
 	{
-		printf("Blacklist record insert malloc failed!\n");
+		DEBUG(LOG_WARNING, 0, "Blacklist record insert malloc failed");
 		perror("");
 		exit(-1);
 	}
@@ -285,7 +288,7 @@ struct rreq_blacklist *rreq_blacklist_insert(struct in_addr dest_addr)
 
 	list_push_front(&rreq_blacklists, &bl->l);
 
-	printf("Buffering blacklist %s time= %u", inet_ntoa(dest_addr), BLACKLIST_TIMEOUT);
+	DEBUG(LOG_DEBUG, 0, "Buffering blacklist %s time= %u", ip_to_str(dest_addr), BLACKLIST_TIMEOUT);
 
 	timer_set_timeout(&bl->bl_timer, BLACKLIST_TIMEOUT);
 
@@ -322,7 +325,7 @@ void rreq_route_discovery(struct in_addr dest_addr, u8_t flags)
 
 	if(seek_list_check(dest_addr))
 	{
-		printf("We have sended a RREQ already!\n");
+		DEBUG(LOG_DEBUG, 0, "We have sended a RREQ already!");
 		return;
 	}
 
@@ -355,7 +358,7 @@ void rreq_route_discovery(struct in_addr dest_addr, u8_t flags)
 	else
 		timer_set_timeout(&seek_entry->seek_timer, NET_TRAVERSAL_TIME);
 
-	printf("Seeking %s ttl= %d\n", inet_ntoa(dest_addr), ttl);
+	DEBUG(LOG_DEBUG, 0, "Seeking %s ttl= %d", ip_to_str(dest_addr), ttl);
 } 
 
 void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr)
@@ -375,7 +378,7 @@ void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr)
 
 	gettimeofday(&now, NULL);
 
-	printf("Repairing route to %s\n", inet_ntoa(rt->dest_addr));
+	DEBUG(LOG_DEBUG, 0, "Repairing route to %s", ip_to_str(rt->dest_addr));
 
 	rt_entry = rt_table_check(src_addr);
 
@@ -384,7 +387,7 @@ void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr)
 	else
 		ttl = rt->hopcnt + LOCAL_ADD_TTL;
 
-	printf("%s, rreq_ttl= %d, dest_hcnt= %d\n", inet_ntoa(rt->dest_addr), ttl, rt->hopcnt);
+	DEBUG(LOG_DEBUG, 0, "%s, rreq_ttl= %d, dest_hcnt= %d", ip_to_str(rt->dest_addr), ttl, rt->hopcnt);
 
 	rt->rt_timer.handler = route_expire_timeout;
 
@@ -400,5 +403,5 @@ void rreq_local_repair(rt_table_t *rt, struct in_addr src_addr)
 	else
 		timer_set_timeout(&seek_entry->seek_timer, NET_TRAVERSAL_TIME);
 
-	printf("Seeking %s ttl= %d\n", inet_ntoa(rt->dest_addr), ttl);
+	DEBUG(LOG_DEBUG, 0, "Seeking %s ttl= %d", ip_to_str(rt->dest_addr), ttl);
 }

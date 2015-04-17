@@ -11,9 +11,9 @@
 #include <errno.h>
 
 typedef unsigned char u8_t;
-typedef signed   char s8_t;
+typedef			 char s8_t;
 typedef unsigned int  u32_t;
-typedef signed   int  s32_t;
+typedef			 int  s32_t;
 
 #define AODV_HELLO    0
 #define AODV_RREQ     1
@@ -29,6 +29,9 @@ typedef signed   int  s32_t;
 #define RERR_RATELIMIT 10
 
 #define IFNAMESIZE 16
+
+#define AODV_LOG_PATH    "/var/log/aodv.log"
+#define AODV_RT_LOG_PATH "/var/log/aodv.rtlog"
 
 #define max(x, y) ((x) > (y) ? (x):(y))
 

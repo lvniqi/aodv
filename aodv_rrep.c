@@ -5,6 +5,7 @@
 #include "aodv_rerr.h"
 #include "parameters.h"
 #include "aodv_neighbor.h"
+#include "debug.h"
 
 RREP *rrep_create(u8_t flags, u8_t prefix, u8_t hopcnt, struct in_addr dest_addr, u32_t dest_seqno, struct in_addr orig_addr, u32_t life)
 {
@@ -47,11 +48,11 @@ void rrep_ack_process(RREP_ack *rrep_ack, s32_t len, struct in_addr ip_src, stru
 
 	if(rt == NULL)
 	{
-		printf("No RREQ_ACK expected for %s\n", inet_ntoa(ip_src));
+		DEBUG(LOG_WARNING, 0, "No RREQ_ACK expected for %s", ip_to_str(ip_src));
 		return;
 	}
 
-	printf("Received RREP_ACK from %s\n", inet_ntoa(ip_src));
+	DEBUG(LOG_DEBUG, 0, "Received RREP_ACK from %s", ip_to_str(ip_src));
 
 	timer_remove(&rt->ack_timer);
 }
@@ -63,7 +64,7 @@ void rrep_send(RREP *rrep, rt_table_t *rev_rt, rt_table_t *fwd_rt,s32_t len)
 
 	if(!rev_rt)
 	{
-		printf("Cannot send RREP, rev_rt = NULL\n");
+		DEBUG(LOG_WARNING, 0, "Cannot send RREP, rev_rt = NULL");
 		return;
 	}
 
@@ -81,13 +82,13 @@ void rrep_send(RREP *rrep, rt_table_t *rev_rt, rt_table_t *fwd_rt,s32_t len)
 			timer_remove(&neighbor->hello_timer);
 			neighbor_link_break(neighbor);
 
-			printf("Link to %s unidirectional!\n", inet_ntoa(neighbor->dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Link to %s unidirectional", ip_to_str(neighbor->dest_addr));
 
 			timer_set_timeout(&neighbor->ack_timer, NEXT_HOP_WAIT);
 		}
 	}
 
-	printf("Sending RREP to next hop %s about %s->%s\n", inet_ntoa(rev_rt->next_hop), inet_ntoa(rev_rt->dest_addr), inet_ntoa(dest));
+	DEBUG(LOG_DEBUG, 0, "Sending RREP to next hop %s about %s->%s", ip_to_str(rev_rt->next_hop), ip_to_str(rev_rt->dest_addr), ip_to_str(dest));
 	aodv_socket_send((AODV_msg *)rrep, rev_rt->next_hop, len, MAXTTL, &this_host.dev);
 
 	if(fwd_rt)
@@ -103,17 +104,17 @@ void rrep_forward(RREP *rrep, s32_t len, rt_table_t *rev_rt, rt_table_t *fwd_rt,
 {
 	if(!fwd_rt || !rev_rt)
 	{
-		printf("Could not forward RREP because of NULL route!\n");
+		DEBUG(LOG_WARNING, 0, "Could not forward RREP because of NULL route");
 		return;
 	}
 
 	if(!rrep)
 	{
-		printf("No RREP to forward!\n");
+		DEBUG(LOG_WARNING, 0, "No RREP to forward");
 		return;
 	}
 
-	printf("Forwarding RREP to %s\n", inet_ntoa(rev_rt->next_hop));
+	DEBUG(LOG_DEBUG, 0, "Forwarding RREP to %s", ip_to_str(rev_rt->next_hop));
 
 	rt_table_t *neighbor;
 
@@ -158,14 +159,14 @@ void rrep_process(RREP *rrep, s32_t len, struct in_addr ip_src, struct in_addr i
 
 	if(len < (s32_t)RREP_SIZE)
 	{
-		printf("IP data filed too short (%d bytes), from %s to %s\n", len, inet_ntoa(ip_src), inet_ntoa(ip_dest));
+		alog(LOG_WARNING, 0, __FUNCTION__, "IP data filed too short (%d bytes), from %s to %s", len, ip_to_str(ip_src), ip_to_str(ip_dest));
 		return;
 	}
 
-	if(rrep_dest.s_addr == this_host.dev.ipaddr.s_addr)
+	if(rrep_dest.s_addr == this_host.dev.ipaddr.s_addr)//We send the rrep
 		return;
 
-	printf("RREP from %s about %s->%s\n", inet_ntoa(ip_src), inet_ntoa(rrep_orig), inet_ntoa(rrep_dest));
+	DEBUG(LOG_DEBUG, 0, "RREP from %s about %s->%s", ip_to_str(ip_src), ip_to_str(rrep_orig), ip_to_str(rrep_dest));
 
 	//check if we should make a forward route
 	fwd_rt = rt_table_check(rrep_dest);
@@ -186,7 +187,7 @@ void rrep_process(RREP *rrep, s32_t len, struct in_addr ip_src, struct in_addr i
 	{
 		if(fwd_rt->hopcnt > 1)
 		{
-			printf("Dropping RREP, fwd_rt->hopcnt= %d, fwd_rt->seqno= %d\n", fwd_rt->hopcnt, fwd_rt->dest_seqno);
+			DEBUG(LOG_DEBUG, 0, "Dropping RREP, fwd_rt->hopcnt= %d, fwd_rt->seqno= %d", fwd_rt->hopcnt, fwd_rt->dest_seqno);
 		}
 
 		return;
@@ -226,7 +227,7 @@ void rrep_process(RREP *rrep, s32_t len, struct in_addr ip_src, struct in_addr i
 		if(rev_rt && rev_rt->state == VALID)
 			rrep_forward(rrep, len, rev_rt, fwd_rt, --ip_ttl);
 		else
-			printf("No route to forward the RREP!\n");
+			DEBUG(LOG_DEBUG, 0, "No route to forward the RREP");
 	}
 
 	//hello_start();//?

@@ -23,12 +23,12 @@ AODV_RREP	defs.h	20;"	d
 AODV_RREP_ACK	defs.h	22;"	d
 AODV_RREQ	defs.h	19;"	d
 AODV_msg	defs.h	/^}AODV_msg;$/;"	t	typeref:struct:__anon6
-ATTR_BUFLEN	nl.c	368;"	d	file:
+ATTR_BUFLEN	nl.c	376;"	d	file:
 BLACKLIST_TIMEOUT	parameters.h	26;"	d
 BUFLEN	nl.c	39;"	d	file:
 Build	kaodv/Makefile	/^define Build\/Compile$/;"	m
 Build	kaodv/Makefile	/^define Build\/Prepare$/;"	m
-CALLBACK_FUNCS	main.c	24;"	d	file:
+CALLBACK_FUNCS	main.c	25;"	d	file:
 CC	Makefile	/^CC = gcc$/;"	m
 CC	Makefile	/^CC = mipsel-linux-gcc$/;"	m
 CCFLAGS	Makefile	/^CCFLAGS = -Wall -DMT$/;"	m
@@ -43,7 +43,7 @@ FIRST_PREC	routing_table.h	17;"	d
 HELLO_DELAY	aodv_hello.h	8;"	d
 HELLO_INTERVAL	parameters.h	27;"	d
 IFNAMESIZE	defs.h	31;"	d
-INCLUDES	Makefile	/^INCLUDES = -I .\/kaodv\/src$/;"	m
+INCLUDES	Makefile	/^INCLUDES = -I.\/kaodv\/src$/;"	m
 INVALID	routing_table.h	9;"	d
 IPPROTO_MIPE	kaodv/src/kaodv_ipenc.h	8;"	d
 K	parameters.h	6;"	d
@@ -91,6 +91,8 @@ NET_KAODV_QUEUE_QMAX	kaodv/src/kaodv_queue.c	24;"	d	file:
 NET_KAODV_QUEUE_QMAX_NAME	kaodv/src/kaodv_queue.c	25;"	d	file:
 NET_TRAVERSAL_TIME	parameters.h	32;"	d
 NEXT_HOP_WAIT	parameters.h	33;"	d
+NIPQUAD	defs.h	35;"	d
+NIPQUAD	kaodv/src/kaodv.h	12;"	d
 NODE_TRAVERSAL_TIME	parameters.h	34;"	d
 OBJS	Makefile	/^OBJS = $(SRCS:.c = .o)$/;"	m
 PATH_DISCOVERY_TIME	parameters.h	35;"	d
@@ -98,7 +100,7 @@ PKG_NAME	kaodv/Makefile	/^PKG_NAME:=kaodv$/;"	m
 PKG_RELEASE	kaodv/Makefile	/^PKG_RELEASE:=1$/;"	m
 PKT_INBOUND	kaodv/src/kaodv_netlink.h	93;"	d
 PKT_OUTBOUND	kaodv/src/kaodv_netlink.h	94;"	d
-RCV_SKB_FAIL	kaodv/src/kaodv_netlink.c	232;"	d	file:
+RCV_SKB_FAIL	kaodv/src/kaodv_netlink.c	262;"	d	file:
 RECE_BUF_SIZE	aodv_socket.h	6;"	d
 RERR	aodv_rerr.h	/^}RERR;$/;"	t	typeref:struct:__anon1
 RERR_CALC_SIZE	aodv_rerr.h	29;"	d
@@ -149,8 +151,8 @@ TTL_START	parameters.h	10;"	d
 TTL_START_HELLO	parameters.h	20;"	d
 TTL_START_LLF	parameters.h	15;"	d
 TTL_THRESHOLD	parameters.h	42;"	d
-TTL_VALUE	aodv_rreq.c	318;"	d	file:
-TTL_VALUE	aodv_timeout.c	38;"	d	file:
+TTL_VALUE	aodv_rreq.c	319;"	d	file:
+TTL_VALUE	aodv_timeout.c	39;"	d	file:
 VALID	routing_table.h	10;"	d
 _AODV_HELLO_H_	aodv_hello.h	2;"	d
 _AODV_NEIGHBOR_H_	aodv_neighbor.h	2;"	d
@@ -279,7 +281,7 @@ ifindex	defs.h	/^	unsigned int ifindex;$/;"	m	struct:dev_info
 ifindex	kaodv/src/kaodv_expl.h	/^	int ifindex;$/;"	m	struct:expl_entry
 ifindex	kaodv/src/kaodv_netlink.h	/^	int ifindex;$/;"	m	struct:kaodv_rt_msg
 ifname	defs.h	/^	s8_t ifname[IFNAMESIZE];$/;"	m	struct:dev_info
-ifname	kaodv/src/kaodv_mod.c	/^static char *ifname[MAX_INTERFACES] = {"ra0"}; $/;"	v	file:
+ifname	kaodv/src/kaodv_mod.c	/^static char *ifname[MAX_INTERFACES] = {"br-lan"}; $/;"	v	file:
 ip_csum	kaodv/src/kaodv_ipenc.c	/^static u_int16_t ip_csum(unsigned short *buf, int nshorts)$/;"	f	file:
 ip_pkt_decapsulate	kaodv/src/kaodv_ipenc.c	/^struct sk_buff *ip_pkt_decapsulate(struct sk_buff *skb)$/;"	f
 ip_pkt_encapsulate	kaodv/src/kaodv_ipenc.c	/^struct sk_buff *ip_pkt_encapsulate(struct sk_buff *skb, __u32 dest)$/;"	f
@@ -298,7 +300,7 @@ kaodv_expl_get	kaodv/src/kaodv_expl.c	/^int kaodv_expl_get(__u32 daddr, struct e
 kaodv_expl_init	kaodv/src/kaodv_expl.c	/^void kaodv_expl_init(void)$/;"	f
 kaodv_expl_timeout	kaodv/src/kaodv_expl.c	/^static void kaodv_expl_timeout(unsigned long data)$/;"	f	file:
 kaodv_expl_update	kaodv/src/kaodv_expl.c	/^int kaodv_expl_update(__u32 daddr, __u32 nhop, unsigned long time, unsigned short flags, int ifindex)$/;"	f
-kaodv_hook	kaodv/src/kaodv_mod.c	/^static unsigned int kaodv_hook(unsigned int hooknum, struct sk_buff *skb, const struct net_device *in, const struct net_device *out, int (*okfn)(struct sk_buff *))$/;"	f	file:
+kaodv_hook	kaodv/src/kaodv_mod.c	/^static unsigned int kaodv_hook(const struct nf_hook_ops *ops, struct sk_buff *skb, const struct net_device *in, const struct net_device *out, int (*okfn)(struct sk_buff *))$/;"	f	file:
 kaodv_init	kaodv/src/kaodv_mod.c	/^module_init(kaodv_init);$/;"	v
 kaodv_init	kaodv/src/kaodv_mod.c	/^static int __init kaodv_init(void)$/;"	f	file:
 kaodv_msg_type_to_str	kaodv/src/kaodv_netlink.h	/^static inline char *kaodv_msg_type_to_str(int type)$/;"	f
@@ -350,7 +352,7 @@ list_for_each_safe	list.h	20;"	d
 list_init_head	list.c	/^void list_init_head(list_t *head)\/\/Init list_head$/;"	f
 list_insert	list.c	/^static void list_insert(list_t *node, list_t *prev, list_t *next)$/;"	f	file:
 list_is_empty	list.c	/^u8_t list_is_empty(const list_t *head)$/;"	f
-list_is_first	kaodv/src/kaodv_expl.c	20;"	d	file:
+list_is_first	kaodv/src/kaodv_expl.c	21;"	d	file:
 list_push_back	list.c	/^void list_push_back(list_t *head, list_t *node)$/;"	f
 list_push_front	list.c	/^void list_push_front(list_t *head, list_t *node)$/;"	f
 list_remove	list.c	/^void list_remove(list_t *node)$/;"	f
@@ -389,7 +391,6 @@ nprecursor	routing_table.h	/^	u32_t nprecursor;$/;"	m	struct:__anon10
 nr_callbacks	main.c	/^static s32_t nr_callbacks = 0;$/;"	v	file:
 num_active	routing_table.h	/^	u32_t num_active;$/;"	m	struct:routing_table
 num_entries	routing_table.h	/^	u32_t num_entries;$/;"	m	struct:routing_table
-num_parms	kaodv/src/kaodv_mod.c	/^static int num_parms = 0;$/;"	v	file:
 num_rerr	aodv_socket.c	/^u32_t num_rerr;$/;"	v
 num_rreq	aodv_socket.c	/^u32_t num_rreq;$/;"	v
 okfn	kaodv/src/kaodv_queue.c	/^	int (*okfn)(struct sk_buff *);$/;"	m	struct:kaodv_queue_entry	file:

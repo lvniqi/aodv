@@ -4,6 +4,7 @@
 #include <net/if.h>
 #include <netinet/udp.h>
 #include <sys/uio.h>
+#include <unistd.h>
 
 #include "aodv_socket.h"
 #include "aodv_rreq.h"
@@ -14,6 +15,7 @@
 #include "aodv_hello.h"
 #include "aodv_neighbor.h"
 #include "aodv_timeout.h"
+#include "debug.h"
 
 #define SOCK_RECVBUF_SIZE 256*1024
 
@@ -40,7 +42,7 @@ void aodv_socket_init(void)
 	
 	if(!this_host.dev.enabled)
 	{
-		printf("Interface not enabled!\n");
+		DEBUG(LOG_DEBUG, 0, "Interface not enabled");
 		exit(-1);
 	}
 
@@ -75,8 +77,7 @@ void aodv_socket_init(void)
 
 	if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_BINDTODEVICE, &ifval, sizeof(struct ifreq)) < 0)
 	{
-		printf("SO_BINDTODEVICE %s failed!\n", this_host.dev.ifname);
-		perror("");
+		perror("SO_BINDTODEVICE failed!\n");
 		exit(-1);
 	}
 
@@ -102,7 +103,7 @@ void aodv_socket_init(void)
 	{
 		if(setsockopt(this_host.dev.sock, SOL_SOCKET, SO_RCVBUF, (s8_t *)&bufsize, optlen) == 0)
 		{
-			printf("Receive buffer size set to %d\n", bufsize);
+			DEBUG(LOG_DEBUG, 0, "Receive buffer size set to %d", bufsize);
 			break;
 		}
 		if(bufsize < RECE_BUF_SIZE)
@@ -114,7 +115,7 @@ void aodv_socket_init(void)
 
 	if(attach_callback_func(this_host.dev.sock, aodv_socket_read) < 0)
 	{
-		printf("Attach socket handler failed!\n");
+		DEBUG(LOG_DEBUG, 0, "Attach socket handler failed");
 		exit(-1);
 	}	
 
@@ -158,7 +159,7 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t 
 				{
 					if(timeval_diff(&now, &rreq_ratelimit[0]) < 1000)
 					{
-						printf("RATELIMIT: Droppping RREQ %ld ms!\n", timeval_diff(&now, &rreq_ratelimit[0]));
+						DEBUG(LOG_DEBUG, 0, "RATELIMIT: Droppping RREQ %ld ms", timeval_diff(&now, &rreq_ratelimit[0]));
 						return;
 					}
 					else
@@ -179,7 +180,7 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t 
 				{
 					if(timeval_diff(&now, &rerr_ratelimit[0]) < 1000)
 					{
-						printf("RATELIMIT: Droppping RERR %ld ms!\n", timeval_diff(&now, &rerr_ratelimit[0]));
+						DEBUG(LOG_DEBUG, 0, "RATELIMIT: Droppping RERR %ld ms", timeval_diff(&now, &rerr_ratelimit[0]));
 						return;
 					}
 					else
@@ -203,7 +204,7 @@ void aodv_socket_send(AODV_msg *aodv_msg, struct in_addr dest, s32_t len, s32_t 
 		gettimeofday(&this_host.last_broadcast_time, NULL);
 	if(sendto(dev->sock, send_buf, len, 0, (struct sockaddr *)&dest_addr, sizeof(struct sockaddr)) < 0)
 	{
-		printf("Failed send to %s\n", inet_ntoa(dest));
+		DEBUG(LOG_WARNING, 0, "Failed send to %s", ip_to_str(dest));
 		perror("");
 		return;
 	}
@@ -221,21 +222,21 @@ void aodv_socket_package_process(AODV_msg *aodv_msg, s32_t len, struct in_addr s
 	switch(aodv_msg->type)
 	{
 		case AODV_HELLO :   hello_process((RREP *)aodv_msg, len);
-							printf("Received HELLO package!\n");
+							DEBUG(LOG_DEBUG, 0, "Received HELLO package");
 							break;
 		case AODV_RREQ :	rreq_process((RREQ *)aodv_msg, len, src, dest, ttl);
-							printf("Received RREQ package!\n");
+							DEBUG(LOG_DEBUG, 0, "Received RREQ package");
 							break;
 		case AODV_RREP :	rrep_process((RREP *)aodv_msg, len, src, dest, ttl);
-							printf("Received RREP package!\n");
+							DEBUG(LOG_DEBUG, 0, "Received RREP package");
 							break;
 		case AODV_RERR :	rerr_process((RERR *)aodv_msg, len, src, dest);
-							printf("Received RERR package!\n");
+							DEBUG(LOG_DEBUG, 0, "Received RERR package");
 							break;
 		case AODV_RREP_ACK :rrep_ack_process((RREP_ack *)aodv_msg, len, src, dest);
-							printf("Received RREP_ACK package!\n");
+							DEBUG(LOG_DEBUG, 0, "Received RREP_ACK package");
 							break;
-		default :			printf("Unknown msg type %u received from %s to %s", aodv_msg->type, inet_ntoa(src), inet_ntoa(dest));
+		default :			DEBUG(LOG_WARNING, 0, "Unknown msg type %u received from %s to %s", aodv_msg->type, ip_to_str(src), ip_to_str(dest));
 							break;
 	}
 }
@@ -265,7 +266,7 @@ void aodv_socket_read(s32_t fd)
 	len = recvmsg(fd, &msg, 0);
 	if(len < 0)
 	{
-		printf("Receive data error!\n");
+		DEBUG(LOG_WARNING, 0, "Receive data error");
 		return;
 	}
 
@@ -287,13 +288,13 @@ void aodv_socket_read(s32_t fd)
 
     if (ttl < 0)
 	{
-		printf("No TTL, package ignored!\n");
+		DEBUG(LOG_DEBUG, 0, "No TTL, package ignored");
 		return;
     }	
 
 	if(this_host.dev.enabled && !memcmp(&src, &this_host.dev.ipaddr, sizeof(struct in_addr)))
 	{
-		printf("A local package returns to us again!\n");
+		DEBUG(LOG_DEBUG, 0, "A local package returns to us again");
 		return;
 	}
 	
@@ -308,4 +309,9 @@ s8_t *aodv_socket_queue_msg(AODV_msg *aodv_msg, s32_t len)
 {
 	memcpy((s8_t *)send_buf, aodv_msg, len);
 	return send_buf;
+}
+
+void aodv_socket_cleanup(void)
+{
+	close(this_host.dev.sock);	
 }

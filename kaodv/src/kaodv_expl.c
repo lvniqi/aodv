@@ -189,7 +189,7 @@ int kaodv_expl_del(__u32 daddr)
 
 	write_unlock_bh(&expl_lock);
 
-	return 1;
+	return res;
 }
 
 int kaodv_expl_get(__u32 daddr, struct expl_entry *e_in)

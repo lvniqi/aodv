@@ -2,6 +2,7 @@
 #include "list.h"
 #include "timer_queue.h"
 #include "aodv_timeout.h"
+#include "debug.h"
 
 list_t sl = {&sl, &sl};
 
@@ -11,7 +12,7 @@ seek_list_t *seek_list_insert(struct in_addr dest_addr, u32_t dest_seqno, s32_t 
 
 	if((entry = (seek_list_t *)malloc(sizeof(seek_list_t))) == NULL)
 	{
-		printf("Malloc failed!\n");
+		DEBUG(LOG_WARNING, 0, "seek_list malloc failed");
 		exit(-1);
 	}
 

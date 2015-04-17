@@ -9,7 +9,7 @@
 
 typedef struct 
 {
-	s8_t *dec_text;
+	s8_t *func_name;
 	void (*action)(void *);
 }func_struct_t;
 

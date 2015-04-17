@@ -188,11 +188,7 @@ static unsigned int kaodv_hook(const struct nf_hook_ops *ops, struct sk_buff *sk
 }
 */
 
-//#ifdef MT
 static char *ifname[MAX_INTERFACES] = {"br-lan"}; 
-//#else
-//static char *ifname[MAX_INTERFACES] = {"wlan0"};
-//#endif
 
 ////static int num_parms = 0;
 

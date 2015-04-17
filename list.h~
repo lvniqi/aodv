@@ -25,9 +25,10 @@ typedef struct list_t
     ((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
 void list_init_head(list_t *head);
+void list_init_head_null(list_t *head);
 u8_t list_is_empty(const list_t *head);
 u8_t list_unattached(const list_t *head);
-void list_insert(list_t *head, list_t *node);
+void list_add(list_t *head, list_t *node);
 void list_push_front(list_t *head, list_t *node);
 void list_push_back(list_t *head, list_t *node);
 void list_remove(list_t *node);

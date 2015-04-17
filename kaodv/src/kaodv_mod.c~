@@ -51,13 +51,8 @@ void kaodv_update_route_timeouts(int hooknum, const struct net_device *dev, stru
 
 	if(res < 0)
 		return;
-#define NIPQUAD(addr) \
-	    ((unsigned char *)&addr)[0], \
-	    ((unsigned char *)&addr)[1], \
-	    ((unsigned char *)&addr)[2], \
-	    ((unsigned char *)&addr)[3]
 	if(hooknum == NF_INET_PRE_ROUTING)
-	{printk("\n\nthe ip who send the message: %d.%d.%d.%d\n\n", NIPQUAD(iph->saddr));
+	{
 		kaodv_netlink_send_rt_update_msg(PKT_INBOUND, iph->saddr, iph->daddr, dev->ifindex);
 		
 	}

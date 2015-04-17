@@ -5,6 +5,11 @@ void list_init_head(list_t *head)//Init list_head
     head->prev = head->next = head;
 }
 
+void list_init_head_null(list_t *head)
+{
+	head->prev = head->next = NULL;
+}
+
 u8_t list_is_empty(const list_t *head)
 {
     return (head->prev == head) && (head->next == head);

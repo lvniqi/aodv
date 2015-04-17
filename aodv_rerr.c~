@@ -2,12 +2,13 @@
 #include "aodv_socket.h"
 #include "routing_table.h"
 #include "list.h"
+#include "debug.h"
 
 RERR *rerr_create(u8_t flags, struct in_addr dest_addr, u32_t dest_seqno)
 {
 	RERR *rerr;
 
-	printf("Create RERR about %s, seqno= %d\n", inet_ntoa(dest_addr), dest_seqno);
+	DEBUG(LOG_DEBUG, 0, "Create RERR about %s, seqno= %d", ip_to_str(dest_addr), dest_seqno);
 
 	rerr = (RERR *)aodv_socket_new_msg();
 	rerr->type = AODV_RERR;
@@ -42,11 +43,11 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 
 	rerr_unicast_dest.s_addr = 0;
 
-	printf("rerr_process ip_src= %s\n", inet_ntoa(ip_src));
+	DEBUG(LOG_DEBUG, 0, "rerr_process ip_src= %s", ip_to_str(ip_src));
 
 	if(len < ((s32_t)RERR_CALC_SIZE(rerr)))
 	{
-		printf("IP data too short (%u bytes) from %s to %s. Should be %d bytes\n", len, inet_ntoa(ip_src), inet_ntoa(ip_dest), RERR_CALC_SIZE(rerr));
+		alog(LOG_WARNING, 0, __FUNCTION__, "IP data too short (%u bytes) from %s to %s. Should be %d bytes", len, ip_to_str(ip_src), ip_to_str(ip_dest), RERR_CALC_SIZE(rerr));
 		return;
 	}
 
@@ -56,7 +57,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 	{
 		udest_addr.s_addr = udest->dest_addr;
 		rerr_dest_seqno = ntohl(udest->dest_seqno);
-		printf("unreachable dest= %s seqno= %d\n", inet_ntoa(udest_addr), rerr_dest_seqno);
+		DEBUG(LOG_DEBUG, 0, "unreachable dest= %s seqno= %d", ip_to_str(udest_addr), rerr_dest_seqno);
 
 		rt = rt_table_check(udest_addr);
 
@@ -65,16 +66,18 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 			//Need to test the seqno, if the seqno is not larger than the seqno in route_table, the route in route_table is a new way to the destination, the rerr break cannot affect the route in route_table
 			if((s32_t)rt->dest_seqno > (s32_t)rerr_dest_seqno)
 			{
-				printf("Udest ignored because of the seqno\n");
+				DEBUG(LOG_DEBUG, 0, "Udest ignored because of the seqno");
 				udest = RERR_UDEST_NEXT(udest);
 				rerr->dest_count--;
 				continue;
 			}
 
+			DEBUG(LOG_DEBUG, 0, "Removing rte %s - WAS IN RERR", ip_to_str(udest_addr));
+
 			if(!rerr->n)
 			{
 				rt_table_invalidate(rt);
-				printf("Invalidating rte %s - IN ERR!\n", inet_ntoa(udest_addr));
+				DEBUG(LOG_DEBUG, 0, "Invalidating rte %s - IN ERR", ip_to_str(udest_addr));
 			}
 			
 			rt->dest_seqno = rerr_dest_seqno;//Update the seqno
@@ -90,7 +93,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 
 					new_rerr = rerr_create(flags, rt->dest_addr, rt->dest_seqno);
 
-					printf("Added %s as unreachable, seqno= %d\n", inet_ntoa(rt->dest_addr), rt->dest_seqno);
+					DEBUG(LOG_DEBUG, 0, "Added %s as unreachable, seqno= %d", ip_to_str(rt->dest_addr), rt->dest_seqno);
 					if(rt->nprecursor == 1)//if the dest_addr is all the same(single one), use unicast, otherwise all use boardcast
 						rerr_unicast_dest = FIRST_PREC(rt->precursors)->neighbor;
 
@@ -99,7 +102,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 				{
 					rerr_add_udest(new_rerr, rt->dest_addr, rt->dest_seqno);
 
-					printf("Added %s as unreachable, seqno= %d\n", inet_ntoa(rt->dest_addr), rt->dest_seqno);
+					DEBUG(LOG_DEBUG, 0, "Added %s as unreachable, seqno= %d", ip_to_str(rt->dest_addr), rt->dest_seqno);
 					if(rerr_unicast_dest.s_addr)
 					{
 						list_t *pos;
@@ -118,7 +121,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 			}
 			else
 			{
-				printf("Not sending RERR, no precursors or route is in repairing!\n");
+				DEBUG(LOG_DEBUG, 0, "Not sending RERR, no precursors or route is in repairing!");
 			}
 
 			if(rt->state == INVALID)
@@ -126,7 +129,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 		}
 		else
 		{
-			printf("Ignoring UDEST %s\n", inet_ntoa(udest_addr));
+			DEBUG(LOG_DEBUG, 0, "Ignoring UDEST %s", ip_to_str(udest_addr));
 		}
 
 		udest = RERR_UDEST_NEXT(udest);
@@ -139,7 +142,7 @@ void rerr_process(RERR *rerr, s32_t len, struct in_addr ip_src, struct in_addr i
 		{	
 			rt = rt_table_check(rerr_unicast_dest);
 			if(!rt)
-				printf("No route for RERR %s to send!\n", inet_ntoa(rerr_unicast_dest));
+				DEBUG(LOG_DEBUG, 0, "No route for RERR %s to send", ip_to_str(rerr_unicast_dest));
 			else
 				aodv_socket_send((AODV_msg *)new_rerr, rerr_unicast_dest, RERR_CALC_SIZE(new_rerr), 1, &this_host.dev);
 		}

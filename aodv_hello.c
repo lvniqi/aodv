@@ -8,6 +8,7 @@
 #include "routing_table.h"
 #include "aodv_socket.h"
 #include "parameters.h"
+#include "debug.h"
 
 static struct timer hello_timer;
 extern s32_t receive_n_hellos;
@@ -19,7 +20,7 @@ void hello_start(void)
 
 	gettimeofday(&this_host.last_forward_time, NULL);
 
-	printf("Starting to send HELLO!\n");
+	DEBUG(LOG_DEBUG, 0, "Starting to send HELLOs");
 
 	timer_init(&hello_timer, hello_send, NULL);
 
@@ -28,7 +29,7 @@ void hello_start(void)
 
 void hello_stop(void)
 {
-	printf("Stopping sending HELLO\n");
+	DEBUG(LOG_DEBUG, 0, "Stopping sending HELLO");
 	timer_remove(&hello_timer);
 }
 
@@ -98,11 +99,11 @@ void hello_process(RREP *hello, s32_t len)
 
 		if(flags & RT_UNIDIR)
 		{
-			printf("%s new NEIGHBOR, link UNI_DIR\n", inet_ntoa(rt->dest_addr));
+			DEBUG(LOG_INFO, 0, "%s new NEIGHBOR, link UNI_DIR", ip_to_str(rt->dest_addr));
 		}
 		else
 		{
-			printf("%s new NEIGHBOR!\n", inet_ntoa(rt->dest_addr));
+			DEBUG(LOG_INFO, 0, "%s new NEIGHBOR", ip_to_str(rt->dest_addr));
 		}
 
 		rt->hello_cnt = 1;
@@ -112,6 +113,7 @@ void hello_process(RREP *hello, s32_t len)
 		if((flags & RT_UNIDIR) && rt->state == VALID && rt->hopcnt > 1)
 		{
 			hello_update_timeout(rt, &now, ALLOWED_HELLO_LOSS *hello_interval);
+			return;
 		}
 
 		if(receive_n_hellos && rt->hello_cnt < (receive_n_hellos - 1))

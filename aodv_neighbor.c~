@@ -5,6 +5,7 @@
 #include "routing_table.h"
 #include "parameters.h"
 #include "list.h"
+#include "debug.h"
 
 //extern s32_t llfeedback;
 
@@ -20,7 +21,7 @@ void neighbor_add(AODV_msg *aodv_msg, struct in_addr src)
 
 	if(!rt)
 	{
-		printf("%s new NEIGHBOR!\n", NIPQUAD(src.s_addr));
+		DEBUG(LOG_DEBUG, 0, "%s new NEIGHBOR", ip_to_str(src));
 		rt = rt_table_insert(src, src, 1, 0, ACTIVE_ROUTE_TIMEOUT, VALID, 0);
 	}
 	else
@@ -51,18 +52,18 @@ void neighbor_link_break(rt_table_t *rt)
 
 	if(rt->hopcnt != 1)
 	{
-		printf("%s is not a neighbor!\n", NIPQUAD(rt->dest_addr.s_addr));
+		DEBUG(LOG_DEBUG, 0, "%s is not a neighbor, hcnt=%d", ip_to_str(rt->dest_addr), rt->hopcnt);
 		return;
 	}
 
-	printf("Link %s down!\n", NIPQUAD(rt->dest_addr.s_addr));
+	DEBUG(LOG_DEBUG, 0, "Link %s down", ip_to_str(rt->dest_addr));
 
 	rt_table_invalidate(rt);
 	
 	if(rt->nprecursor && !(rt->flags & RT_REPAIR))
 	{
 		rerr = rerr_create(0, rt->dest_addr, rt->dest_seqno);
-		printf("Added %s as a unreachable, seqno= %d\n", NIPQUAD(rt->dest_addr.s_addr), rt->dest_seqno);
+		DEBUG(LOG_DEBUG, 0, "Added %s as a unreachable, seqno= %d", ip_to_str(rt->dest_addr), rt->dest_seqno);
 
 		if(rt->nprecursor == 1)
 			rerr_unicast_dest = FIRST_PREC(rt->precursors)->neighbor;
@@ -83,7 +84,7 @@ void neighbor_link_break(rt_table_t *rt)
 				if((rt->flags & RT_REPAIR) && rt_u->hopcnt <= MAX_REPAIR_TTL)
 				{
 					rt_u->flags |= RT_REPAIR;
-					printf("Marking %s for REPAIR", NIPQUAD(rt->dest_addr.s_addr));
+					DEBUG(LOG_DEBUG, 0, "Marking %s for REPAIR", ip_to_str(rt->dest_addr));
 
 					rt_table_invalidate(rt_u);
 					continue;
@@ -100,7 +101,7 @@ void neighbor_link_break(rt_table_t *rt)
 						if(rt_u->nprecursor == 1)
 							rerr_unicast_dest = FIRST_PREC(rt_u->precursors)->neighbor;
 
-						printf("Added %s as unreachable, seqno= %d\n", NIPQUAD(rt_u->dest_addr.s_addr), rt_u->dest_seqno);
+						DEBUG(LOG_DEBUG, 0, "Added %s as unreachable, seqno= %d", ip_to_str(rt_u->dest_addr), rt_u->dest_seqno);
 					}
 					else
 					{
@@ -121,7 +122,7 @@ void neighbor_link_break(rt_table_t *rt)
 							}
 						}
 						
-						printf("Added %s as unreachable, seqno= %d\n", NIPQUAD(rt_u->dest_addr.s_addr), rt_u->dest_seqno);
+						DEBUG(LOG_DEBUG, 0, "Added %s as unreachable, seqno= %d", ip_to_str(rt_u->dest_addr), rt_u->dest_seqno);
 					}
 				}
 				precursor_list_destroy(rt_u);
@@ -131,13 +132,13 @@ void neighbor_link_break(rt_table_t *rt)
 
 	if(rerr)
 	{
-		printf("RERR created, %d bytes\n", RERR_CALC_SIZE(rerr));
+		DEBUG(LOG_DEBUG, 0, "RERR created, %d bytes", RERR_CALC_SIZE(rerr));
 
 		if(rerr_unicast_dest.s_addr)
 		{
 			rt_u = rt_table_check(rerr_unicast_dest);
 			if(!rt)
-				printf("No route for RERR %s to send!\n", NIPQUAD(rerr_unicast_dest.s_addr));
+				DEBUG(LOG_DEBUG, 0, "No route for RERR %s to send!", ip_to_str(rerr_unicast_dest));
 			else
 				aodv_socket_send((AODV_msg *)rerr, rerr_unicast_dest, RERR_CALC_SIZE(rerr), 1, &this_host.dev);
 		}

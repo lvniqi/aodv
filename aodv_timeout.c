@@ -11,13 +11,14 @@
 #include "aodv_socket.h"
 #include "timer_queue.h"
 #include "nl.h"
+#include "debug.h"
 
 extern s32_t expanding_ring_search, local_repair, delete_period;
 
 void rreq_record_timeout(void *arg)
 {
 	struct rreq_record *rec = (struct rreq_record *)arg;
-
+	
 	list_remove(&rec->l);
 	free(rec); 
 }
@@ -43,7 +44,7 @@ void route_discovery_timeout(void *arg)
 
 	gettimeofday(&now, NULL);
 
-	printf("Route discovery timeout %s\n", inet_ntoa(entry->dest_addr));
+	DEBUG(LOG_DEBUG, 0, "Route discovery timeout %s", ip_to_str(entry->dest_addr));
 
 	if(entry->rreq_cnt < RREQ_RETRIES)
 	{
@@ -61,7 +62,7 @@ void route_discovery_timeout(void *arg)
 			timer_set_timeout(&entry->seek_timer, entry->rreq_cnt * 2 * NET_TRAVERSAL_TIME);
 		}
 
-		printf("Seeking %s ttl= %d wait= %d\n", inet_ntoa(entry->dest_addr), entry->ttl, 2 * entry->ttl * NODE_TRAVERSAL_TIME);
+		DEBUG(LOG_DEBUG, 0, "Seeking %s ttl= %d wait= %d", ip_to_str(entry->dest_addr), entry->ttl, 2 * entry->ttl * NODE_TRAVERSAL_TIME);
 
 		rt = rt_table_check(entry->dest_addr);
 
@@ -74,7 +75,7 @@ void route_discovery_timeout(void *arg)
 	}
 	else
 	{
-		printf("No route found!\n");
+		DEBUG(LOG_WARNING, 0, "No route found");
 
 		nl_send_no_route_found_msg(entry->dest_addr);
 		
@@ -84,7 +85,7 @@ void route_discovery_timeout(void *arg)
 
 		if(repair_rt && (repair_rt->flags & RT_REPAIR))
 		{
-			printf("REPAIR for %s failed!\n", inet_ntoa(repair_rt->dest_addr));
+			DEBUG(LOG_WARNING, 0, "REPAIR for %s failed", ip_to_str(repair_rt->dest_addr));
 			local_repair_timeout(repair_rt);
 		}
 	}
@@ -119,7 +120,7 @@ void local_repair_timeout(void *arg)
 		
 		aodv_socket_send((AODV_msg *)rerr, rerr_dest, RERR_CALC_SIZE(rerr), 1, &this_host.dev);
 
-		printf("Sending RERR about %s to %s\n", inet_ntoa(rt->dest_addr), inet_ntoa(rerr_dest));
+		DEBUG(LOG_DEBUG, 0, "Sending RERR about %s to %s", ip_to_str(rt->dest_addr), ip_to_str(rerr_dest));
 	}
 
 	precursor_list_destroy(rt);
@@ -127,7 +128,7 @@ void local_repair_timeout(void *arg)
 	rt->rt_timer.handler = route_delete_timeout;
 	timer_set_timeout(&rt->rt_timer, DELETE_PERIOD);
 
-	printf("%s removed in %d msecs\n", inet_ntoa(rt->dest_addr), DELETE_PERIOD);
+	DEBUG(LOG_DEBUG, 0, "%s removed in %d msecs", ip_to_str(rt->dest_addr), DELETE_PERIOD);
 }
 
 void route_expire_timeout(void *arg)
@@ -139,7 +140,7 @@ void route_expire_timeout(void *arg)
 	if(!rt)
 		return;
 
-	printf("Route %s down, seqno= %d\n", inet_ntoa(rt->dest_addr), rt->dest_seqno);
+	DEBUG(LOG_DEBUG, 0, "Route %s down, seqno= %d", ip_to_str(rt->dest_addr), rt->dest_seqno);
 	
 	if(rt->hopcnt == 1)
 		neighbor_link_break(rt);
@@ -159,7 +160,7 @@ void route_delete_timeout(void *arg)
 	if(!rt)
 		return;
 
-	printf("%s delete!\n", inet_ntoa(rt->dest_addr));
+	DEBUG(LOG_DEBUG, 0, "%s delete", ip_to_str(rt->dest_addr));
 
 	rt_table_delete(rt);
 }
@@ -176,14 +177,14 @@ void hello_timeout(void *arg)
 
 	gettimeofday(&now, NULL);
 
-	printf("HELLO FAILURE %s, last HELLO: %ld\n", inet_ntoa(rt->dest_addr), timeval_diff(&now, &rt->last_hello_time));
+	DEBUG(LOG_WARNING, 0, "HELLO FAILURE %s, last HELLO: %ld", ip_to_str(rt->dest_addr), timeval_diff(&now, &rt->last_hello_time));
 
 	if(rt && rt->state == VALID && !(rt->flags & RT_UNIDIR))
 	{
 		if(local_repair && rt->hopcnt <= MAX_REPAIR_TTL)
 		{
 			rt->flags |= RT_REPAIR;
-			printf("Marking %s for REPAIR!\n", inet_ntoa(rt->dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Marking %s for REPAIR", ip_to_str(rt->dest_addr));
 		}
 
 		neighbor_link_break(rt);
@@ -201,12 +202,12 @@ void rrep_ack_timeout(void *arg)
 
 	rreq_blacklist_insert(rt->dest_addr);
 
-	printf("%s add in rreq_blacklist\n", inet_ntoa(rt->dest_addr));
+	DEBUG(LOG_DEBUG, 0, "%s add in rreq_blacklist", ip_to_str(rt->dest_addr));
 }
 
 void wait_on_reboot_timeout(void *arg)
 {
 	*((s32_t *)arg) = 0;
 
-	printf("Wait on reboot over!!\n");
+	DEBUG(LOG_DEBUG, 0, "Wait on reboot over");
 }

@@ -43,9 +43,13 @@ static inline s32_t timeval_add_msec(struct timeval *t, unsigned long msec)
 	return 0;
 }
 
-s32_t timer_init(struct timer *t, timeout_func_t f, void *data);
-void timer_set_timeout(struct timer *t, long msec);
+void timer_queue_init(void);
 s32_t timer_remove(struct timer *t);
+void timer_set_timeout(struct timer *t, long msec);
+s32_t timer_timeout_now(struct timer *t);
+struct timeval *timer_age_queue(void);
+s32_t timer_init(struct timer *t, timeout_func_t f, void *data);
 void timer_add(struct timer *t);
+void timer_timeout(struct timeval *now);
 
 #endif

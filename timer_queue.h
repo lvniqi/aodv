@@ -24,7 +24,7 @@ static inline long timeval_diff(struct timeval *t1, struct timeval *t2)
 		return -1;
     else 
 	{
-		res = ((t1->tv_sec - t2->tv_sec) * 1000 + t1->tv_usec - t2->tv_usec) / 1000;//My param is not the param in example???????
+		res = ((t1->tv_sec - t2->tv_sec) * 1000000 + t1->tv_usec - t2->tv_usec) / 1000;// 1 sec = 10^6 usec (microsecond)
 		return (long) res;
     }
 }
@@ -43,9 +43,13 @@ static inline s32_t timeval_add_msec(struct timeval *t, unsigned long msec)
 	return 0;
 }
 
-s32_t timer_init(struct timer *t, timeout_func_t f, void *data);
-void timer_set_timeout(struct timer *t, long msec);
+void timer_queue_init(void);
 s32_t timer_remove(struct timer *t);
+void timer_set_timeout(struct timer *t, long msec);
+s32_t timer_timeout_now(struct timer *t);
+struct timeval *timer_age_queue(void);
+s32_t timer_init(struct timer *t, timeout_func_t f, void *data);
 void timer_add(struct timer *t);
+void timer_timeout(struct timeval *now);
 
 #endif

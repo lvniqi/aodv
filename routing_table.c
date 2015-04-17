@@ -8,6 +8,7 @@
 #include "seek_list.h"
 #include "aodv_neighbor.h"
 #include "nl.h"
+#include "debug.h"
 
 void rt_table_init(void)
 {
@@ -85,14 +86,14 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 		rt = (rt_table_t *)pos;
 		if(rt->dest_addr.s_addr == dest.s_addr)
 		{
-			printf("%s already existed in routing table!\n", inet_ntoa(dest));
+			DEBUG(LOG_DEBUG, 0, "%s already existed in routing table", ip_to_str(dest));
 			return NULL;
 		}
 	}
 
 	if((rt = (rt_table_t *)malloc(sizeof(rt_table_t))) == NULL)
 	{
-		printf("rt_table malloc failed!\n");
+		DEBUG(LOG_WARNING, 0, "rt_table malloc failed");
 		exit(-1);
 	}
 
@@ -120,7 +121,7 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 
 	rt_tbl.num_entries++;
 
-	printf("Inserting %s (bucket %d) next hop %s\n", inet_ntoa(dest), index, inet_ntoa(next));
+	DEBUG(LOG_DEBUG, 0, "Inserting %s (bucket %d) next hop %s", ip_to_str(dest), index, ip_to_str(next));
 
 	list_add(&rt_tbl.tbl[index], &rt->l);
 
@@ -145,7 +146,7 @@ rt_table_t *rt_table_insert(struct in_addr dest, struct in_addr next, u32_t hops
 ////////////////////////////////////
 //gateway set
 ///////////////////////////////////
-	printf("New timer for %s, life= %d\n", inet_ntoa(rt->dest_addr), lifetime);
+	DEBUG(LOG_DEBUG, 0, "New timer for %s, life= %d", ip_to_str(rt->dest_addr), lifetime);
 
 	if(lifetime != 0)
 		timer_set_timeout(&rt->rt_timer, lifetime);
@@ -171,7 +172,7 @@ rt_table_t *rt_table_update(rt_table_t *rt, struct in_addr next, u32_t hops, u32
 	}
 	else if(rt->next_hop.s_addr != 0 && rt->next_hop.s_addr != next.s_addr)
 	{
-		printf("rt->next_hop= %s, new_next_hop= %s\n", inet_ntoa(rt->next_hop), inet_ntoa(next));
+		DEBUG(LOG_DEBUG, 0, "rt->next_hop= %s, new_next_hop= %s", ip_to_str(rt->next_hop), ip_to_str(next));
 
 		nl_send_add_route_msg(rt->dest_addr, next, hops, lifetime, flags, this_host.dev.ifindex);
 	}
@@ -271,13 +272,13 @@ s32_t rt_table_invalidate(rt_table_t *rt)//route expiry and deletion
 
 	if(rt->state == INVALID)
 	{
-		printf("Route %s already invalidated!\n", inet_ntoa(rt->dest_addr));
+		DEBUG(LOG_DEBUG, 0, "Route %s already invalidated", ip_to_str(rt->dest_addr));
 		return -1;
 	}
 
 	if(rt->hello_timer.used)
 	{
-		printf("last HELLO: %ld\n", timeval_diff(&now, &rt->last_hello_time));
+		DEBUG(LOG_DEBUG, 0, "last HELLO: %ld", timeval_diff(&now, &rt->last_hello_time));
 	}
 
 	timer_remove(&rt->rt_timer);
@@ -303,14 +304,14 @@ s32_t rt_table_invalidate(rt_table_t *rt)//route expiry and deletion
 		rt->rt_timer.handler = local_repair_timeout;
 		timer_set_timeout(&rt->rt_timer, ACTIVE_ROUTE_TIMEOUT);
 
-		printf("%s kept for repairs during %d msecs\n", inet_ntoa(rt->dest_addr), ACTIVE_ROUTE_TIMEOUT);
+		DEBUG(LOG_DEBUG, 0, "%s kept for repairs during %d msecs", ip_to_str(rt->dest_addr), ACTIVE_ROUTE_TIMEOUT);
 	}
 	else
 	{
 		rt->rt_timer.handler = route_delete_timeout;
 		timer_set_timeout(&rt->rt_timer, DELETE_PERIOD);
 
-		printf("%s removed in %d msecs\n", inet_ntoa(rt->dest_addr), DELETE_PERIOD);
+		DEBUG(LOG_DEBUG, 0, "%s removed in %d msecs", ip_to_str(rt->dest_addr), DELETE_PERIOD);
 	}
 
 	return 0;
@@ -320,7 +321,7 @@ void rt_table_delete(rt_table_t *rt)
 {
 	if(!rt)
 	{
-		printf("No route entry to delete!\n");
+		DEBUG(LOG_DEBUG, 0, "No route entry to delete");
 		return;
 	}
 
@@ -365,11 +366,11 @@ void precursor_add(rt_table_t *rt, struct in_addr addr)
 
 	if((pr = (precursor_t *)malloc(sizeof(precursor_t))) == NULL)
 	{
-		printf("Prenode malloc failed!\n");
+		DEBUG(LOG_WARNING, 0, "Prenode malloc failed");
 		exit(-1);
 	}
 
-	printf("Adding precursor %s to rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
+	DEBUG(LOG_DEBUG, 0, "Adding precursor %s to rte %s", ip_to_str(addr), ip_to_str(rt->dest_addr));
 
 	pr->neighbor.s_addr = addr.s_addr;
 
@@ -390,7 +391,7 @@ void precursor_remove(rt_table_t *rt, struct in_addr addr)
 		pr = (precursor_t *)pos;
 		if(pr->neighbor.s_addr == addr.s_addr)
 		{
-			printf("Removing precursor %s from rte %s\n", inet_ntoa(addr), inet_ntoa(rt->dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Removing precursor %s from rte %s", ip_to_str(addr), ip_to_str(rt->dest_addr));
 
 			list_remove(pos);
 			rt->nprecursor--;

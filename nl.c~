@@ -15,6 +15,7 @@
 #include "parameters.h"
 #include "aodv_socket.h"
 #include "aodv_rerr.h"
+#include "debug.h"
 
 struct nlsock
 {
@@ -80,7 +81,7 @@ void nl_init(void)
 
 	if(attach_callback_func(aodvnl.sock, nl_kaodv_callback) < 0)
 	{
-		printf("Attach failed!\n");
+		DEBUG(LOG_WARNING, 0, "Attach failed");
 	}
 
 	memset(&rtnl, 0, sizeof(struct nlsock));
@@ -115,7 +116,7 @@ void nl_init(void)
 
 	if(attach_callback_func(rtnl.sock, nl_rt_callback) < 0)
 	{
-		printf("Attach failed!\n");
+		DEBUG(LOG_WARNING, 0, "Attach failed");
 	}
 }
 
@@ -153,23 +154,23 @@ static void nl_kaodv_callback(s32_t sock)
 			nlmerr = NLMSG_DATA(nlm);
 			if(nlmerr->error == 0)
 			{
-				printf("NLMSG_ACK\n");
+				DEBUG(LOG_DEBUG, 0, "NLMSG_ACK");
 			}	
 			else
 			{
-				printf("NLMSG_ERROR, error= %d, type= %s\n", nlmerr->error, kaodv_msg_type_to_str(nlmerr->msg.nlmsg_type));
+				DEBUG(LOG_WARNING, 0, "NLMSG_ERROR, error= %d, type= %s", nlmerr->error, kaodv_msg_type_to_str(nlmerr->msg.nlmsg_type));
 			}
 			break;
 
 		case KAODVM_DEBUG:
-			printf("kaodv: %s\n", (s8_t *)NLMSG_DATA(nlm));
+			DEBUG(LOG_DEBUG, 0, "kaodv: %s", (s8_t *)NLMSG_DATA(nlm));
 			break;
 
 		case KAODVM_TIMEOUT:
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
 
-			printf("Got timeout msg form kernel for %s\n", inet_ntoa(dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Got timeout msg form kernel for %s", ip_to_str(dest_addr));
 
 			rt = rt_table_check(dest_addr);
 
@@ -179,7 +180,7 @@ static void nl_kaodv_callback(s32_t sock)
 			}
 			else
 			{
-				printf("Got rt timeout msg but there is no route\n");
+				DEBUG(LOG_DEBUG, 0, "Got rt timeout msg but there is no route");
 			}
 			break;
 
@@ -187,7 +188,7 @@ static void nl_kaodv_callback(s32_t sock)
 			m = NLMSG_DATA(nlm);
 			dest_addr.s_addr = m->dest;
 
-			printf("Got ROUTE_REQ from kernel for %s\n", inet_ntoa(dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Got ROUTE_REQ from kernel for %s", ip_to_str(dest_addr));
 
 			rreq_route_discovery(dest_addr, 0);
 			break;
@@ -197,7 +198,7 @@ static void nl_kaodv_callback(s32_t sock)
 			dest_addr.s_addr = m->dest;
 			src_addr.s_addr = m->src;
 
-			printf("Got ROUTE_REPAIR from kernel for %s\n", inet_ntoa(dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Got ROUTE_REPAIR from kernel for %s", ip_to_str(dest_addr));
 
 			fwd_rt = rt_table_check(dest_addr);
 
@@ -212,7 +213,8 @@ static void nl_kaodv_callback(s32_t sock)
 			dest_addr.s_addr = m->dest;
 			src_addr.s_addr = m->src;
 
-			printf("Got ROUTE_UPDATE from kernel, S= %s, D= %s\n", inet_ntoa(src_addr), inet_ntoa(dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Got ROUTE_UPDATE from kernel, S= %s, D= %s", ip_to_str(src_addr), ip_to_str(dest_addr));
+
 
 			if(dest_addr.s_addr == AODV_BROADCAST || dest_addr.s_addr == this_host.dev.broadcast.s_addr)
 				return;
@@ -228,7 +230,7 @@ static void nl_kaodv_callback(s32_t sock)
 			dest_addr.s_addr = m->dest;
 			src_addr.s_addr = m->src;
 
-			printf("Got SEND_RERR from kernel, S= %s, D= %s\n", inet_ntoa(src_addr), inet_ntoa(dest_addr));
+			DEBUG(LOG_DEBUG, 0, "Got SEND_RERR from kernel, S= %s, D= %s", ip_to_str(src_addr), ip_to_str(dest_addr));
 
 			if(dest_addr.s_addr == AODV_BROADCAST || dest_addr.s_addr == this_host.dev.broadcast.s_addr)
 				return;
@@ -241,7 +243,7 @@ static void nl_kaodv_callback(s32_t sock)
 				struct in_addr rerr_dest;
 				RERR *rerr;
 
-				printf("Sending RERR for unsolicited message from %s to %s\n", inet_ntoa(src_addr), inet_ntoa(dest_addr));
+				DEBUG(LOG_DEBUG, 0, "Sending RERR for unsolicited message from %s to %s", ip_to_str(src_addr), ip_to_str(dest_addr));
 
 				if(fwd_rt)
 				{
@@ -261,13 +263,13 @@ static void nl_kaodv_callback(s32_t sock)
 				aodv_socket_send((AODV_msg *)rerr, rerr_dest, RERR_CALC_SIZE(rerr), 1, &this_host.dev);
 				if(wait_on_reboot)
 				{
-					printf("Wait on reboot timer reset\n");
+					DEBUG(LOG_DEBUG, 0, "Wait on reboot timer reset");
 					timer_set_timeout(&worb_timer, DELETE_PERIOD);
 				}
 			}while(0);
 			break;
 		default:
-			printf("Got msg type= %d\n", nlm->nlmsg_type);
+			DEBUG(LOG_DEBUG, 0, "Got msg type= %d", nlm->nlmsg_type);
 	}
 }
 
@@ -297,12 +299,12 @@ static void nl_rt_callback(s32_t sock)
 		case NLMSG_ERROR:
 			nlmerr = NLMSG_DATA(nlm);
 			if(nlmerr == 0)
-				printf("NLMSG_ACK!\n");
+				DEBUG(LOG_DEBUG, 0, "NLMSG_ACK");
 			else
-				printf("NLMSG_ERROR, error= %d, type= %d\n", nlmerr->error, nlmerr->msg.nlmsg_type);
+				DEBUG(LOG_WARNING, 0, "NLMSG_ERROR, error= %d, type= %d", nlmerr->error, nlmerr->msg.nlmsg_type);
 			break;
 		case RTM_NEWLINK:
-			printf("RTM_NEWADDR!\n");
+			DEBUG(LOG_DEBUG, 0, "RTM_NEWADDR");
 			break;
 		case RTM_NEWADDR:
 			ifm = NLMSG_DATA(nlm);
@@ -318,15 +320,15 @@ static void nl_rt_callback(s32_t sock)
 
 					memcpy(&ifaddr, RTA_DATA(rta), RTA_PAYLOAD(rta));
 
-					printf("Interface index %d changed address to %s\n", ifm->ifa_index, inet_ntoa(ifaddr));
+					DEBUG(LOG_DEBUG, 0, "Interface index %d changed address to %s", ifm->ifa_index, ip_to_str(ifaddr));
 				}
 			}
 			break;
 		case RTM_NEWROUTE:
-			printf("RTM_NEWROUTE!\n");
+			DEBUG(LOG_DEBUG, 0, "RTM_NEWROUTE");
 			break;
 		default:
-			printf("Unkown type of kernel message!\n");
+			DEBUG(LOG_DEBUG, 0, "Unkown type of kernel message");
 			break;
 	}
 }
@@ -351,7 +353,7 @@ s32_t prefix_length(s32_t family, void *nm)
 	}
 	else
 	{
-		printf("Unsupported address family!\n");
+		DEBUG(LOG_WARNING, 0, "Unsupported address family");
 	}
 
 	return 0;
@@ -462,7 +464,7 @@ s32_t nl_send_add_route_msg(struct in_addr dest, struct in_addr next_hop, s32_t 
 		struct kaodv_rt_msg m;
 	}areq;
 
-	printf("ADD/UPDATE: %s:%s ifindex= %d\n", inet_ntoa(dest), inet_ntoa(next_hop), ifindex);
+	printf("ADD/UPDATE: %s:%s ifindex= %d\n", ip_to_str(dest), ip_to_str(next_hop), ifindex);
 
 	memset(&areq, 0, sizeof(areq));
 
@@ -510,7 +512,7 @@ s32_t nl_send_no_route_found_msg(struct in_addr dest)
 
 	areq.m.dest = dest.s_addr;
 
-	printf("Send NOROUTE_FOUND to kernel: %s\n", inet_ntoa(dest));
+	printf("Send NOROUTE_FOUND to kernel: %s\n", ip_to_str(dest));
 
 	return nl_send(&aodvnl, &areq.n);
 }
@@ -524,7 +526,7 @@ s32_t nl_send_del_route_msg(struct in_addr dest, struct in_addr next_hop, s32_t 
 		struct kaodv_rt_msg m;
 	}areq;
 
-	printf("Send DEL_ROUTE to kernel: %s\n", inet_ntoa(dest));
+	printf("Send DEL_ROUTE to kernel: %s\n", ip_to_str(dest));
 
 	memset(&areq, 0, sizeof(areq));
 
